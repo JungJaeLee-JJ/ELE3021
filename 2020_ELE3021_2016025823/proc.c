@@ -337,7 +337,8 @@ scheduler(void)
 
     //RR
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE) continue;
+      cprintf("problem 1\n");
+		if(p->state != RUNNABLE) continue;
       if( p->pid % 2 == 0 )
       {
         flag = 1;
