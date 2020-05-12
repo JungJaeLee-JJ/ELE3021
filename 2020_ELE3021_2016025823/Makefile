@@ -29,7 +29,7 @@ OBJS = \
 	vm.o\
 
 # Cross-compiling (e.g., on Mac OS X)
-# TOOLPREFIX = i386-jos-elf
+#TOOLPREFIX = i386-jos-elf
 
 # Using native tools (e.g., on X86 Linux)
 #TOOLPREFIX = 
@@ -185,6 +185,8 @@ UPROGS=\
 	_my_interrupt\
 	_test_cprintf\
 	_test_yield\
+	_ml_test\
+	_mlfq_tset\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -254,7 +256,7 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
-	printf.c umalloc.c lab2.c my_interrupt.c test_cprintf.c test_yield.c\
+	printf.c umalloc.c lab2.c my_interrupt.c test_cprintf.c test_yield.c ml_test.c mlfq_test.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 
