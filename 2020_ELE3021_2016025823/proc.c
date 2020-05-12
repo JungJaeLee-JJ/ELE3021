@@ -335,41 +335,36 @@ scheduler(void)
 
     int flag = 0;
 
+    #ifdef MULTILEVEL_SCHED
+
     //RR
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      cprintf("problem 1\n");
-		if(p->state != RUNNABLE) continue;
-      if( p->pid % 2 == 0 )
-      {
-        flag = 1;
-        c->proc = p;
-        switchuvm(p);
-        p->state = RUNNING;
-        swtch(&(c->scheduler), p->context);
-        switchkvm();
-        c->proc = 0;
-      }
+      //cprintf("RR problem 1\n");
+		  if(p->state != RUNNABLE || p->pid % 2 != 0) continue;
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
+      c->proc = 0;   
     }
   
     //RR에서 없는 경우 FCFS
-    if(flag == 0)
-    {
-      struct proc *p_tmp = ptable.proc;
-      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-        if(p->state != RUNNABLE) continue;
-        //홀수이면서 제일 pid가 작은 것을 찾아준다.
-        if( p->pid % 2 == 1 && (p_tmp->pid > p->pid)) p_tmp=p;
-      }
-      c->proc = p_tmp;
-      switchuvm(p_tmp);
-      p_tmp->state = RUNNING;
-      swtch(&(c->scheduler), p_tmp->context);
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      //cprintf("RR problem 1\n");
+		  if(p->state != RUNNABLE || p->pid % 2 == 0) continue;
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+      swtch(&(c->scheduler), p->context);
       switchkvm();
-      c->proc = 0;
+      c->proc = 0;   
     }
+
     release(&ptable.lock);
 
-    /*
+    //#else MLFQ_SCHED
+    #else
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE) continue;
 
@@ -388,8 +383,9 @@ scheduler(void)
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
+    #endif
     release(&ptable.lock);
-    */
+
 
   }
 }
@@ -426,6 +422,7 @@ yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
   myproc()->state = RUNNABLE;
+  //myproc()->running_time = 0;
   sched();
   release(&ptable.lock);
 }
