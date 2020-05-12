@@ -333,22 +333,29 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
 
-    int flag = 0;
 
     #ifdef MULTILEVEL_SCHED
+//	cprintf("i'm in multi\n");
+
+	
 
     //RR
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       //cprintf("RR problem 1\n");
-		  if(p->state != RUNNABLE || p->pid % 2 != 0) continue;
-      c->proc = p;
+	 // if(p->state != RUNNABLE || (p->pid % 2 != 0&& p->pid!=1)) continue;
+      if(p->state == RUNNABLE && p->pid % 2 ==0) {
+		 
+		break;	
+	  }
+	  c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
       swtch(&(c->scheduler), p->context);
       switchkvm();
-      c->proc = 0;   
+      c->proc = 0;  
     }
   
+	if(flag==1) continue;
     //RR에서 없는 경우 FCFS
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       //cprintf("RR problem 1\n");
@@ -358,17 +365,18 @@ scheduler(void)
       p->state = RUNNING;
       swtch(&(c->scheduler), p->context);
       switchkvm();
-      c->proc = 0;   
+      c->proc = 0; 
+	  break;
     }
 
-    release(&ptable.lock);
+    //release(&ptable.lock);
 
     //#else MLFQ_SCHED
     #else
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE) continue;
 
-
+	 // cprintf("i'm in normal\n");
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
