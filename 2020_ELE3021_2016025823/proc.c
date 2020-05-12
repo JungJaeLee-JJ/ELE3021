@@ -335,42 +335,42 @@ scheduler(void)
 
 
     #ifdef MULTILEVEL_SCHED
-//	cprintf("i'm in multi\n");
+    //cprintf("i'm in multi\n");
 
-	
+    int even_p = 0;
 
-    //RR
+    //짝수 하나라도 있는지 파악한다.
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      //cprintf("RR problem 1\n");
-	 // if(p->state != RUNNABLE || (p->pid % 2 != 0&& p->pid!=1)) continue;
       if(p->state == RUNNABLE && p->pid % 2 ==0) {
-		 
-		break;	
+        even_p = 1;
+        break
+      }
 	  }
-	  c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
-      swtch(&(c->scheduler), p->context);
-      switchkvm();
-      c->proc = 0;  
-    }
-  
-	if(flag==1) continue;
-    //RR에서 없는 경우 FCFS
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      //cprintf("RR problem 1\n");
-		  if(p->state != RUNNABLE || p->pid % 2 == 0) continue;
+
+    if(even_p){
+      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state == RUNNABLE && p->pid % 2 != 0) continue;
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
       swtch(&(c->scheduler), p->context);
       switchkvm();
       c->proc = 0; 
-	  break;
+      }
     }
-
-    //release(&ptable.lock);
-
+	  else{
+      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		    if(p->state != RUNNABLE || p->pid % 2 == 0) continue;
+        c->proc = p;
+        switchuvm(p);
+        p->state = RUNNING;
+        swtch(&(c->scheduler), p->context);
+        switchkvm();
+        c->proc = 0; 
+	      break;
+      }
+    }
+ 
     //#else MLFQ_SCHED
     #else
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
@@ -393,8 +393,6 @@ scheduler(void)
     }
     #endif
     release(&ptable.lock);
-
-
   }
 }
 
