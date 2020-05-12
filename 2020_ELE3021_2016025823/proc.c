@@ -343,13 +343,13 @@ scheduler(void)
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state == RUNNABLE && p->pid % 2 ==0) {
         even_p = 1;
-        break
+        break;
       }
-	  }
+	}
 
     if(even_p){
       for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state == RUNNABLE && p->pid % 2 != 0) continue;
+      if(p->state != RUNNABLE || p->pid % 2 != 0) continue;
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
@@ -367,7 +367,7 @@ scheduler(void)
         swtch(&(c->scheduler), p->context);
         switchkvm();
         c->proc = 0; 
-	      break;
+	    break;
       }
     }
  
