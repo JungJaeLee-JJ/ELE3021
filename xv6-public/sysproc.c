@@ -62,6 +62,14 @@ sys_sleep(void)
   int n;
   uint ticks0;
 
+  /////////////////////////////////////////
+  //sleep때는 초기화
+  proc *p = myproc();
+  p->queuelevel = 0;
+  p->priority = 0;
+  p->tickleft = 4;
+  //////////////////////////////////////////
+
   if(argint(0, &n) < 0)
     return -1;
   acquire(&tickslock);
@@ -93,5 +101,27 @@ sys_uptime(void)
 void 
 sys_yield()
 {
-  return yield();
+  acquire(&ptable.lock);  //DOC: yieldlock
+  struct proc *now_p = myproc();
+  now_p->state = RUNNABLE;
+  /////////////////////////////////////////
+  //yield때는 초기화
+  now_p->queuelevel = 0;
+  now_p->priority = 0;
+  now_p->tickleft = 4;
+  //////////////////////////////////////////
+  sched();
+  release(&ptable.lock);
+}
+
+int             
+getlev()
+{
+  return getlev();
+}
+
+int             
+setpriority(int pid, int priority)
+{
+ return setpriority(pid,priority);
 }
