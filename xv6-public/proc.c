@@ -333,7 +333,7 @@ scheduler(void)
   c->proc = 0;
 
   //MLFQ
-  struct proc each_level_last_process[MLFQ_K];
+  struct proc *each_level_last_process[MLFQ_K];
   
   for(;;){
     // Enable interrupts on this processor.
@@ -391,8 +391,8 @@ scheduler(void)
     //큐 레벨 측정
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE) continue;
-      if(selected_queue > p.queuelevel) {
-        selected_queue = p.queuelevel;
+      if(selected_queue > p->queuelevel) {
+        selected_queue = p->queuelevel;
         p_in_selected_queue = p;
       }
     }
@@ -403,7 +403,7 @@ scheduler(void)
       //우선순위가 높은 거 찾기.
       for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
         if(p->state != RUNNABLE || p->queuelevel != selected_queue ) continue;
-        if(p_in_selected_queue.priority < p.priority){
+        if(p_in_selected_queue->priority < p->priority){
           p_in_selected_queue = p;
         }
       }
