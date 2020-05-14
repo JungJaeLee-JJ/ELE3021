@@ -107,13 +107,13 @@ sys_yield()
 }
 
 int             
-getlev()
+sys_getlev()
 {
   return getlev();
 }
 
 int             
-setpriority(int pid, int priority)
+sys_setpriority(int pid, int priority)
 {
  return setpriority(pid,priority);
 }

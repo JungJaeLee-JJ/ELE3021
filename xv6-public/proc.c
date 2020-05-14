@@ -333,8 +333,10 @@ scheduler(void)
   c->proc = 0;
 
   //MLFQ
+  #ifdef MLFQ_SCHED
   struct proc *each_level_last_process[MLFQ_K];
-  
+  #endif
+
   for(;;){
     // Enable interrupts on this processor.
     sti();
@@ -467,6 +469,14 @@ scheduler(void)
     release(&ptable.lock);
 
   }
+}
+
+void 
+priority_boosting(void)
+{
+	struct proc *p;
+	acquire(&ptable.lock);
+	for
 }
 
 // Enter scheduler.  Must hold only ptable.lock
