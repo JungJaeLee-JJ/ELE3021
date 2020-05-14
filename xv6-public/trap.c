@@ -102,10 +102,32 @@ trap(struct trapframe *tf)
 
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
+  #ifdef MLFQ_SCHED
+  if(myproc() && myproc()->state == RUNNING ){
+     
+      //큐 레벨이 올라가야할때
+      if(myproc()->queuelevel < MLFQ_K -1  && myproc()->running_time >= L0_TQ){
+        myproc()->q_lev = 1;
+        myproc()->running_time = 0;
+        yield();
+      }
+
+      // If running time is equal to time quantum when process in L1,
+      // decrease priority and reset running time
+      else if(myproc()->q_lev == 1 && myproc()->running_time >= L1_TQ){
+        myproc()->priority = (myproc()->priority == 0) ? 0 : myproc()->priority - 1;
+        myproc()->running_time = 0;
+        yield();
+      }
+    }
+    if(ticks%100 == 0 && !use_monop)
+      priority_boosting();
+
+  #else
   if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER)
     yield();
-
+  #endif
   // Check if the process has been killed since we yielded
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)
     exit();

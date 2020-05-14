@@ -325,6 +325,7 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+
 void
 scheduler(void)
 {
@@ -332,10 +333,12 @@ scheduler(void)
   struct cpu *c = mycpu();
   c->proc = 0;
 
-  //MLFQ
   #ifdef MLFQ_SCHED
   struct proc *each_level_last_process[MLFQ_K];
   #endif
+
+
+  //MLFQ
 
   for(;;){
     // Enable interrupts on this processor.
@@ -378,34 +381,28 @@ scheduler(void)
  
     #elif MLFQ_SCHED
 
-    int selected_queue = MLFQ_K;
+    //초기값은 가장 높은 레벨의 큐(우선순위가 낮은)이다
+    int selected_queue = MLFQ_K-1;
     struct proc * p_in_selected_queue = 0;
-    
-    //부스팅
-    if(ticks%100==0){
-      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-        p->queuelevel=0;
-        p->tickleft=4;
-      }
-      for(int i=1;i<MLFQ_K;i++) each_level_last_process[i]=0;
-    }
+   
     
     //큐 레벨 측정
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE) continue;
-      if(selected_queue > p->queuelevel) {
+      if(selected_queue >= p->queuelevel) {
         selected_queue = p->queuelevel;
         p_in_selected_queue = p;
       }
     }
 
     //기존에 큐에 스케줄링 했던게 없거나, 타임퀀텀 다 써서 찾아줘야 할 때
-    if( each_level_last_process[selected_queue] == 0 )
+    if( each_level_last_process[selected_queue] == 0  || each_level_last_process[selected_queue]->queuelevel != selected_queue)
     {
       //우선순위가 높은 거 찾기.
       for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+        //아까 고른 레벨의 큐에 들어있는 프로세스만 본다.
         if(p->state != RUNNABLE || p->queuelevel != selected_queue ) continue;
-        if(p_in_selected_queue->priority < p->priority){
+        if(p_in_selected_queue->priority < p->priority &&  p->tickleft >0){
           p_in_selected_queue = p;
         }
       }
@@ -413,6 +410,7 @@ scheduler(void)
     else {
       p_in_selected_queue = each_level_last_process[selected_queue];
     }
+
     //마지막 각 큐별 마지막 프로세스 기억
     if(p_in_selected_queue != 0)
     {
@@ -421,33 +419,17 @@ scheduler(void)
       //기존 스케줄링했던게 있을 때
       c->proc = p_in_selected_queue;
       switchuvm(p_in_selected_queue);
-      p_in_selected_queue->state = RUNNING;
-      //틱감소
-      p_in_selected_queue->tickleft--;
-      //레벨증가
-      if(p_in_selected_queue->tickleft==0){
-        each_level_last_process[selected_queue] = 0;
-        if(p_in_selected_queue->queuelevel < MLFQ_K-1 ) p_in_selected_queue->queuelevel++;
-      }
-      
+      p_in_selected_queue->state = RUNNING;      
       swtch(&(c->scheduler), p_in_selected_queue->context);
       switchkvm();
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
-    //스케줄링 할게 없는 경우 부스팅
     else
     {
-      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-        p->queuelevel=0;
-        p->tickleft=4;
-      }
-      for(int i=1;i<MLFQ_K;i++) each_level_last_process[i]=0;
+      priority_boosting();
     }
-    
-    
-    
 
     #else
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
@@ -471,12 +453,18 @@ scheduler(void)
   }
 }
 
+//부스팅
 void 
 priority_boosting(void)
 {
 	struct proc *p;
 	acquire(&ptable.lock);
-	for
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+        p->queuelevel=0;
+        p->tickleft=4;
+  }
+  for(int i=1;i<MLFQ_K;i++) each_level_last_process[i]=0;
+	release(&ptable.lock);
 }
 
 // Enter scheduler.  Must hold only ptable.lock
