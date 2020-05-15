@@ -336,7 +336,6 @@ priority_boosting(void)
         p->queuelevel=0;
         p->tickleft=4;
   }
-  for(int i=1;i<MLFQ_K;i++) each_level_last_process[i]=0;
 	release(&ptable.lock);
 }
 
@@ -354,10 +353,6 @@ scheduler(void)
   struct cpu *c = mycpu();
   c->proc = 0;
 
-  #ifdef MLFQ_SCHED
-  //struct proc *each_level_last_process[MLFQ_K];
-  for(int i=0;i<MLFQ_K;i++) each_level_last_process[i]=0;
-  #endif
 
 
   //MLFQ
@@ -404,7 +399,7 @@ scheduler(void)
 	    break;
       }
     }
-	
+    release(&ptable.lock);
  
     #elif MLFQ_SCHED
 
@@ -413,25 +408,22 @@ scheduler(void)
     struct proc * p_in_selected_queue = 0;
    
     
-    //큐 레벨 측정
+    //프로세스 선정
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE) continue;
+
+      if(p->state != RUNNABLE || p->tickleft < 1) continue;
+      
+      //큐레벨이 높은거 우선
       if(selected_queue >= p->queuelevel) {
         selected_queue = p->queuelevel;
         p_in_selected_queue = p;
       }
-    }
-    //해당 큐에서 가장 우선순위가 높은 프로세스 
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE || p->queuelevel != selected_queue ) continue;
-      if(p_in_selected_queue->priority < p->priority &&  p->tickleft >0){
-          p_in_selected_queue = p;
-      }
+      //큐레벨이 같은 경우에는 우선순위가 높은 것을 고른다.
+      else if(selected_queue == p->queuelevel && p_in_selected_queue->priority < p->priority )  p_in_selected_queue = p;
     }
 
     if(p_in_selected_queue != 0 )
     {
-
       //기존 스케줄링했던게 있을 때
       c->proc = p_in_selected_queue;
       switchuvm(p_in_selected_queue);
@@ -446,50 +438,7 @@ scheduler(void)
     {
       release(&ptable.lock);
       priority_boosting();
-      acquire(&ptable.lock);
     }
-
-/*
-
-	//cprintf("%d %d \n", selected_queue,p_in_selected_queue->pid);
-
-    //기존에 큐에 스케줄링 했던게 없거나, 타임퀀텀 다 써서 찾아줘야 할 때
-    if( each_level_last_process[selected_queue] == 0  || each_level_last_process[selected_queue]->queuelevel != selected_queue)
-    {
-      //우선순위가 높은 거 찾기.
-      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-        //아까 고른 레벨의 큐에 들어있는 프로세스만 본다.
-        if(p->state != RUNNABLE || p->queuelevel != selected_queue ) continue;
-        if(p_in_selected_queue->priority < p->priority &&  p->tickleft >0){
-          p_in_selected_queue = p;
-        }
-      }
-	  cprintf("%d\n",p_in_selected_queue->pid);
-    }
-    else if(each_level_last_process[selected_queue]->state == RUNNABLE)    {
-      p_in_selected_queue = each_level_last_process[selected_queue];
-    }
-
-    //마지막 각 큐별 마지막 프로세스 기억
-    if(p_in_selected_queue != 0 && p_in_selected_queue->state == RUNNABLE)
-    {
-      each_level_last_process[selected_queue] = p_in_selected_queue;
-
-      //기존 스케줄링했던게 있을 때
-      c->proc = p_in_selected_queue;
-      switchuvm(p_in_selected_queue);
-      p_in_selected_queue->state = RUNNING;      
-      swtch(&(c->scheduler), p_in_selected_queue->context);
-      switchkvm();
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
-    }
-    else
-    {
-      priority_boosting();
-    }
-    */
 
     #else
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
@@ -507,8 +456,8 @@ scheduler(void)
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
-    #endif
     release(&ptable.lock);
+    #endif
   }
 }
 
@@ -565,7 +514,7 @@ setpriority(int pid, int priority)
   if(priority<0 || priority>10) return -2;
   acquire(&ptable.lock);
   for(child = ptable.proc; child < &ptable.proc[NPROC]; child++){
-    if(child->pid == pid && child->parent == parent)
+    if(child->pid == pid && child->parent->pid == parent->pid )
     {
       child->priority=priority;
       release(&ptable.lock);
