@@ -327,10 +327,6 @@ wait(void)
 //      via swtch back to the scheduler.
 
 
-#ifdef MLFQ_SCHED
-struct proc *each_level_last_process[MLFQ_K];
-#endif
-
 void 
 priority_boosting(void)
 {
@@ -425,6 +421,36 @@ scheduler(void)
         p_in_selected_queue = p;
       }
     }
+    //해당 큐에서 가장 우선순위가 높은 프로세스 
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE || p->queuelevel != selected_queue ) continue;
+      if(p_in_selected_queue->priority < p->priority &&  p->tickleft >0){
+          p_in_selected_queue = p;
+      }
+    }
+
+    if(p_in_selected_queue != 0 )
+    {
+
+      //기존 스케줄링했던게 있을 때
+      c->proc = p_in_selected_queue;
+      switchuvm(p_in_selected_queue);
+      p_in_selected_queue->state = RUNNING;      
+      swtch(&(c->scheduler), p_in_selected_queue->context);
+      switchkvm();
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+    }
+    else
+    {
+      release(&ptable.lock);
+      priority_boosting();
+      acquire(&ptable.lock);
+    }
+
+/*
+
 	//cprintf("%d %d \n", selected_queue,p_in_selected_queue->pid);
 
     //기존에 큐에 스케줄링 했던게 없거나, 타임퀀텀 다 써서 찾아줘야 할 때
@@ -463,6 +489,7 @@ scheduler(void)
     {
       priority_boosting();
     }
+    */
 
     #else
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
@@ -482,7 +509,6 @@ scheduler(void)
     }
     #endif
     release(&ptable.lock);
-
   }
 }
 
