@@ -326,6 +326,31 @@ wait(void)
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
 
+
+#ifdef MLFQ_SCHED
+struct proc *each_level_last_process[MLFQ_K];
+#endif
+
+void 
+priority_boosting(void)
+{
+	struct proc *p;
+	acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+        p->queuelevel=0;
+        p->tickleft=4;
+  }
+  for(int i=1;i<MLFQ_K;i++) each_level_last_process[i]=0;
+	release(&ptable.lock);
+}
+
+/*
+#ifdef MLFQ_SCHED
+struct proc *each_level_last_process[MLFQ_K];
+#endif
+*/
+
+
 void
 scheduler(void)
 {
@@ -334,7 +359,8 @@ scheduler(void)
   c->proc = 0;
 
   #ifdef MLFQ_SCHED
-  struct proc *each_level_last_process[MLFQ_K];
+  //struct proc *each_level_last_process[MLFQ_K];
+  for(int i=0;i<MLFQ_K;i++) each_level_last_process[i]=0;
   #endif
 
 
@@ -349,6 +375,7 @@ scheduler(void)
     //cprintf("i'm in multi\n");
     int even_p = 0;
     //짝수 하나라도 있는지 파악한다.
+	
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state == RUNNABLE && p->pid % 2 ==0) {
         even_p = 1;
@@ -358,14 +385,17 @@ scheduler(void)
     if(even_p){
       for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE || p->pid % 2 != 0) continue;
+	  
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
       swtch(&(c->scheduler), p->context);
       switchkvm();
+
       c->proc = 0; 
+	  
       }
-    }
+	}
 	  else{
       for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
 		    if(p->state != RUNNABLE || p->pid % 2 == 0) continue;
@@ -378,6 +408,7 @@ scheduler(void)
 	    break;
       }
     }
+	
  
     #elif MLFQ_SCHED
 
@@ -394,6 +425,7 @@ scheduler(void)
         p_in_selected_queue = p;
       }
     }
+	//cprintf("%d %d \n", selected_queue,p_in_selected_queue->pid);
 
     //기존에 큐에 스케줄링 했던게 없거나, 타임퀀텀 다 써서 찾아줘야 할 때
     if( each_level_last_process[selected_queue] == 0  || each_level_last_process[selected_queue]->queuelevel != selected_queue)
@@ -406,13 +438,14 @@ scheduler(void)
           p_in_selected_queue = p;
         }
       }
+	  cprintf("%d\n",p_in_selected_queue->pid);
     }
-    else {
+    else if(each_level_last_process[selected_queue]->state == RUNNABLE)    {
       p_in_selected_queue = each_level_last_process[selected_queue];
     }
 
     //마지막 각 큐별 마지막 프로세스 기억
-    if(p_in_selected_queue != 0)
+    if(p_in_selected_queue != 0 && p_in_selected_queue->state == RUNNABLE)
     {
       each_level_last_process[selected_queue] = p_in_selected_queue;
 
@@ -453,19 +486,7 @@ scheduler(void)
   }
 }
 
-//부스팅
-void 
-priority_boosting(void)
-{
-	struct proc *p;
-	acquire(&ptable.lock);
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-        p->queuelevel=0;
-        p->tickleft=4;
-  }
-  for(int i=1;i<MLFQ_K;i++) each_level_last_process[i]=0;
-	release(&ptable.lock);
-}
+
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores

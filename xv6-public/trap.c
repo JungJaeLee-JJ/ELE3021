@@ -81,7 +81,8 @@ trap(struct trapframe *tf)
   //PAGEBREAK: 13
   default:
     if(myproc() == 0 || (tf->cs&3) == 0){
-      // In kernel, it must be our mistake.
+      //cprintf("에러탐지용 :  %d\n",myproc());
+	  // In kernel, it must be our mistake.
       cprintf("unexpected trap %d from cpu %d eip %x (cr2=0x%x)\n",
               tf->trapno, cpuid(), tf->eip, rcr2());
       panic("trap");
@@ -103,25 +104,21 @@ trap(struct trapframe *tf)
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
   #ifdef MLFQ_SCHED
-  if(myproc() && myproc()->state == RUNNING ){
-     
-      //큐 레벨이 올라가야할때
-      if(myproc()->queuelevel < MLFQ_K -1  && myproc()->running_time >= L0_TQ){
-        myproc()->q_lev = 1;
-        myproc()->running_time = 0;
-        yield();
-      }
+   if(myproc() && myproc()->state == RUNNING){
 
-      // If running time is equal to time quantum when process in L1,
-      // decrease priority and reset running time
-      else if(myproc()->q_lev == 1 && myproc()->running_time >= L1_TQ){
-        myproc()->priority = (myproc()->priority == 0) ? 0 : myproc()->priority - 1;
-        myproc()->running_time = 0;
+      if(myproc()->tickleft >= 0) myproc()->tickleft--;
+      //큐 레벨이 올라가야할때
+      if(myproc()->queuelevel < MLFQ_K -1  &&  myproc()->tickleft == 0 ){
+        myproc()->queuelevel++;
+        myproc()->tickleft = 2 * myproc()->queuelevel + 4;
         yield();
       }
-    }
-    if(ticks%100 == 0 && !use_monop)
-      priority_boosting();
+      else if(myproc()->tickleft <= 0 ){
+         yield();
+      }
+  }
+  
+  if(ticks%100 == 0) priority_boosting();
 
   #else
   if(myproc() && myproc()->state == RUNNING &&
