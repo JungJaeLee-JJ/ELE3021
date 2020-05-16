@@ -433,6 +433,7 @@ scheduler(void)
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
+	  release(&ptable.lock);
     }
     else
     {
@@ -510,14 +511,19 @@ int
 setpriority(int pid, int priority)
 {
   struct proc *child;
-  struct proc *parent = myproc();
   if(priority<0 || priority>10) return -2;
+  //cli();
+ //struct proc *parent = mycpu()->proc;
+  //sti();
   acquire(&ptable.lock);
   for(child = ptable.proc; child < &ptable.proc[NPROC]; child++){
-    if(child->pid == pid && child->parent->pid == parent->pid )
+	  //cprintf("pid : %d ppid : %d 찾고있는 자식 pid : %d now pid : %d \n", child->pid, child->parent->pid, parent->pid ,pid);
+    if((child->pid == pid) &&( child->parent->
+			pid == myproc()->pid) )
     {
       child->priority=priority;
       release(&ptable.lock);
+
       return 0;
     }
 	}
