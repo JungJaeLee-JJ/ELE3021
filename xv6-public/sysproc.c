@@ -65,7 +65,7 @@ sys_sleep(void)
   /////////////////////////////////////////
   //sleep때는 초기화
   myproc()->queuelevel = 0;
-  myproc()->priority = 0;
+ // myproc()->priority = 0;
   myproc()->tickleft = 4;
   //////////////////////////////////////////
 
@@ -101,7 +101,7 @@ void
 sys_yield()
 {
   myproc()->queuelevel = 0;
-  myproc()->priority = 0;
+  //myproc()->priority = 0;
   myproc()->tickleft = 4;
   yield();
 }
