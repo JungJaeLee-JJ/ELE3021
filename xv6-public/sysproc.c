@@ -127,7 +127,7 @@ sys_getadmin(void)
 {
   char student_number[10];
   char my_number[10] = "2016025823";
-  argptr(0, student_number, sizeof(char)*10);
+  argptr(0, &student_number, sizeof(char)*10);
   int flag = 0;
   for(int i=0;i<10;i++){
     if(my_number[i] == student_number[i]) flag++;

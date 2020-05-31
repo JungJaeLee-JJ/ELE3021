@@ -24,3 +24,4 @@
 #define SYS_getlev 23
 #define SYS_setpriority 24
 #define SYS_getadmin 25
+#define SYS_exec2 26
