@@ -57,6 +57,9 @@ struct proc {
 
   //for adminmode
   int admin_mode;
+
+  //for limit sz
+  int limit_sz;
 };
 
 // Process memory is laid out contiguously, low addresses first:

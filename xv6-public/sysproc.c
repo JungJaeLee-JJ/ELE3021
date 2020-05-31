@@ -129,3 +129,11 @@ sys_getadmin(void)
   if( argstr(0,&student_number) < 0) return -1;
   return getadmin(student_number);
 }
+
+int
+sys_setmemorylimit(void)
+{
+  int pid,limit;
+  if(argint(0,&pid)<0 || argint(1,&limit) < 0) return -1;
+  return setmemorylimit(pid,limit);
+}

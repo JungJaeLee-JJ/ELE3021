@@ -25,3 +25,4 @@
 #define SYS_setpriority 24
 #define SYS_getadmin 25
 #define SYS_exec2 26
+#define SYS_setmemorylimit 27

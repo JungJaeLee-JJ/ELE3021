@@ -28,6 +28,8 @@ int getlev(void);
 int setpriority(int pid, int priority);
 int getadmin(char *password);
 int exec2(char*, char**, int stacksize);
+int setmemorylimit(int pid , int limit);
+
 
 
 

@@ -96,6 +96,7 @@ found:
 
   //프로세스를 생성할 때는 admin모드는 꺼져있다.
   p->admin_mode = 0;
+  p->limit_sz = -1;
   //////////////////////////////////////////
 
   release(&ptable.lock);
@@ -171,6 +172,11 @@ growproc(int n)
   struct proc *curproc = myproc();
 
   sz = curproc->sz;
+
+  //limit가 설정이 되어 있고, 할당될 사이즈가 limit보다 더 커질려고 할 때 
+  if (curproc->limit_sz != -1 && n+sz >curproc->limit_sz ){
+    return -1;
+  }
   if(n > 0){
     if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
       return -1;
@@ -526,6 +532,30 @@ getadmin(char *password)
     return -1;
   }
 }
+
+int 
+setmemorylimit(int pid, int limit)
+{
+  //admin mode가 아니거나, limit가 음수인 경우 
+  if(myproc()->admin_mode == 0 || limit < 0) return -1;
+  struct proc *target = 0;
+  struct proc *p;
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid) target = p;
+  }
+	release(&ptable.lock);
+  //해당 pid가 없을 때
+  if(target==0) return -1;
+
+  //기존 사이즈보다 더 작은 Limit을 주려고 할때
+
+  if(target->sz > limit) return -1;
+  target->limit_sz = limit;
+  return 0;
+}
+
+
 
 int             
 setpriority(int pid, int priority)
