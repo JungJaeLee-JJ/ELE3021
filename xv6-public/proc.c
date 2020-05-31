@@ -511,9 +511,20 @@ getlev(void)
 }
 
 int
-getadmin(void)
+getadmin(char *password)
 {
-  myproc()->admin_mode = 1;
+  char my_number[10] = "2016025823";
+  int flag = 0;
+  for(int i=0;i<10;i++){
+    if(my_number[i] == password[i]) flag++;
+  }
+  if(flag == 10){
+    myproc()->admin_mode = 1;
+    return 0;
+  }
+  else{
+    return -1;
+  }
 }
 
 int             
