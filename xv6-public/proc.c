@@ -510,7 +510,7 @@ getlev(void)
   return myproc()->queuelevel;
 }
 
-void
+int
 getadmin(void)
 {
   myproc()->admin_mode = 1;
