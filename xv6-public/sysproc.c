@@ -120,3 +120,23 @@ sys_setpriority(void)
 	if(argint(1,&priority)<0) return -2;
 	return setpriority(pid,priority);
 }
+
+
+int
+sys_getadmin(void)
+{
+  char student_number[10];
+  char my_number[10] = "2016025823";
+  argptr(0, student_number, sizeof(char)*10);
+  int flag = 0;
+  for(int i=0;i<10;i++){
+    if(my_number[i] == student_number[i]) flag++;
+  }
+  if(flag == 10){
+    getadmin();
+    return 0;
+  }
+  else{
+    return 1;
+  }
+}

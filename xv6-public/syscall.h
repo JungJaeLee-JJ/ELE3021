@@ -23,3 +23,4 @@
 #define SYS_yield  22
 #define SYS_getlev 23
 #define SYS_setpriority 24
+#define SYS_getadmin 25

@@ -26,6 +26,7 @@ int uptime(void);
 void yield(void);
 int getlev(void);
 int setpriority(int pid, int priority);
+int getadmin(char *password);
 
 
 

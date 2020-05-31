@@ -93,6 +93,9 @@ found:
   p->queuelevel = 0;
   p->priority = 0;
   p->tickleft = 4;
+
+  //프로세스를 생성할 때는 admin모드는 꺼져있다.
+  p->admin_mode = 0;
   //////////////////////////////////////////
 
   release(&ptable.lock);
@@ -505,6 +508,12 @@ int
 getlev(void)
 {
   return myproc()->queuelevel;
+}
+
+void
+getadmin(void)
+{
+  myproc()->admin_mode = 1;
 }
 
 int             
