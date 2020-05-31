@@ -108,7 +108,7 @@ extern int sys_getlev(void);
 extern int sys_setpriority(void);
 extern int sys_getadmin(void);
 extern int sys_exec2(void);
-extern int sys_setmemorylimit(int pid , int limit);
+extern int sys_setmemorylimit(void);
 
 
 static int (*syscalls[])(void) = {
