@@ -56,7 +56,7 @@ struct proc {
   int tickleft;
 
   //for adminmode
-  bool admin_mode;
+  int admin_mode;
 };
 
 // Process memory is laid out contiguously, low addresses first:
