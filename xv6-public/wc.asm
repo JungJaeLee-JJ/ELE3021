@@ -946,10 +946,12 @@ SYSCALL(getadmin)
  47a:	b8 19 00 00 00       	mov    $0x19,%eax
  47f:	cd 40                	int    $0x40
  481:	c3                   	ret    
- 482:	66 90                	xchg   %ax,%ax
- 484:	66 90                	xchg   %ax,%ax
- 486:	66 90                	xchg   %ax,%ax
- 488:	66 90                	xchg   %ax,%ax
+
+00000482 <exec2>:
+SYSCALL(exec2)
+ 482:	b8 1a 00 00 00       	mov    $0x1a,%eax
+ 487:	cd 40                	int    $0x40
+ 489:	c3                   	ret    
  48a:	66 90                	xchg   %ax,%ax
  48c:	66 90                	xchg   %ax,%ax
  48e:	66 90                	xchg   %ax,%ax

@@ -2631,10 +2631,12 @@ SYSCALL(getadmin)
      dda:	b8 19 00 00 00       	mov    $0x19,%eax
      ddf:	cd 40                	int    $0x40
      de1:	c3                   	ret    
-     de2:	66 90                	xchg   %ax,%ax
-     de4:	66 90                	xchg   %ax,%ax
-     de6:	66 90                	xchg   %ax,%ax
-     de8:	66 90                	xchg   %ax,%ax
+
+00000de2 <exec2>:
+SYSCALL(exec2)
+     de2:	b8 1a 00 00 00       	mov    $0x1a,%eax
+     de7:	cd 40                	int    $0x40
+     de9:	c3                   	ret    
      dea:	66 90                	xchg   %ax,%ax
      dec:	66 90                	xchg   %ax,%ax
      dee:	66 90                	xchg   %ax,%ax

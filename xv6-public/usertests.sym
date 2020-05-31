@@ -12,11 +12,11 @@
 00000000 .debug_loc
 00000000 .debug_ranges
 00000000 usertests.c
-00005de0 args.1480
+00005de0 args.1484
 00000000 ulib.c
 00000000 printf.c
 00003970 printint
-000054d0 digits.1116
+000054d0 digits.1120
 00000000 umalloc.c
 00005e60 freep
 00005e64 base
@@ -94,6 +94,7 @@
 000038a2 exit
 00003830 atoi
 00001ab0 linkunlink
+00003962 exec2
 0000a5a0 name
 000036e0 strlen
 000038e2 open

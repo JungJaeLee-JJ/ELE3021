@@ -1249,10 +1249,12 @@ SYSCALL(getadmin)
  61a:	b8 19 00 00 00       	mov    $0x19,%eax
  61f:	cd 40                	int    $0x40
  621:	c3                   	ret    
- 622:	66 90                	xchg   %ax,%ax
- 624:	66 90                	xchg   %ax,%ax
- 626:	66 90                	xchg   %ax,%ax
- 628:	66 90                	xchg   %ax,%ax
+
+00000622 <exec2>:
+SYSCALL(exec2)
+ 622:	b8 1a 00 00 00       	mov    $0x1a,%eax
+ 627:	cd 40                	int    $0x40
+ 629:	c3                   	ret    
  62a:	66 90                	xchg   %ax,%ax
  62c:	66 90                	xchg   %ax,%ax
  62e:	66 90                	xchg   %ax,%ax

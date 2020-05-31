@@ -944,10 +944,12 @@ SYSCALL(getadmin)
  4ba:	b8 19 00 00 00       	mov    $0x19,%eax
  4bf:	cd 40                	int    $0x40
  4c1:	c3                   	ret    
- 4c2:	66 90                	xchg   %ax,%ax
- 4c4:	66 90                	xchg   %ax,%ax
- 4c6:	66 90                	xchg   %ax,%ax
- 4c8:	66 90                	xchg   %ax,%ax
+
+000004c2 <exec2>:
+SYSCALL(exec2)
+ 4c2:	b8 1a 00 00 00       	mov    $0x1a,%eax
+ 4c7:	cd 40                	int    $0x40
+ 4c9:	c3                   	ret    
  4ca:	66 90                	xchg   %ax,%ax
  4cc:	66 90                	xchg   %ax,%ax
  4ce:	66 90                	xchg   %ax,%ax

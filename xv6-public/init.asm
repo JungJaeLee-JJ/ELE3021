@@ -782,10 +782,12 @@ SYSCALL(getadmin)
  3ea:	b8 19 00 00 00       	mov    $0x19,%eax
  3ef:	cd 40                	int    $0x40
  3f1:	c3                   	ret    
- 3f2:	66 90                	xchg   %ax,%ax
- 3f4:	66 90                	xchg   %ax,%ax
- 3f6:	66 90                	xchg   %ax,%ax
- 3f8:	66 90                	xchg   %ax,%ax
+
+000003f2 <exec2>:
+SYSCALL(exec2)
+ 3f2:	b8 1a 00 00 00       	mov    $0x1a,%eax
+ 3f7:	cd 40                	int    $0x40
+ 3f9:	c3                   	ret    
  3fa:	66 90                	xchg   %ax,%ax
  3fc:	66 90                	xchg   %ax,%ax
  3fe:	66 90                	xchg   %ax,%ax

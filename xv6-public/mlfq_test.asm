@@ -1791,10 +1791,12 @@ SYSCALL(getadmin)
  97a:	b8 19 00 00 00       	mov    $0x19,%eax
  97f:	cd 40                	int    $0x40
  981:	c3                   	ret    
- 982:	66 90                	xchg   %ax,%ax
- 984:	66 90                	xchg   %ax,%ax
- 986:	66 90                	xchg   %ax,%ax
- 988:	66 90                	xchg   %ax,%ax
+
+00000982 <exec2>:
+SYSCALL(exec2)
+ 982:	b8 1a 00 00 00       	mov    $0x1a,%eax
+ 987:	cd 40                	int    $0x40
+ 989:	c3                   	ret    
  98a:	66 90                	xchg   %ax,%ax
  98c:	66 90                	xchg   %ax,%ax
  98e:	66 90                	xchg   %ax,%ax

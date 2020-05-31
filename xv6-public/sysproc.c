@@ -125,7 +125,7 @@ sys_setpriority(void)
 int
 sys_getadmin(void)
 {
-  char student_number[10];
-  argptr(0, &student_number, sizeof(char)*10);
+  char *student_number;
+  if( argstr(0,&student_number) < 0) return -1;
   return getadmin(student_number);
 }
