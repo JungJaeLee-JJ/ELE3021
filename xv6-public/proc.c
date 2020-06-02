@@ -556,6 +556,19 @@ setmemorylimit(int pid, int limit)
 }
 
 
+int
+list()
+{
+  cprintf("NAME\t\t|PID\t|TIME(ms)\t|MEMORY(bytes)\t|MEMLIM(bytes)\n");
+  struct proc *p;
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    cprintf("%s\t\t|%d\t|TIME(ms)\t|%d\t|%d\n", p->name,p->pid,p->sz,p->limit_sz );
+  }
+	release(&ptable.lock);
+  return 0;
+}
+
 
 int             
 setpriority(int pid, int priority)
