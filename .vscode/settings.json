@@ -1,8 +1,0 @@
-{
-    "C_Cpp.errorSquiggles": "Disabled",
-    "C_Cpp.dimInactiveRegions": false,
-    "files.associations": {
-        "locale": "c",
-        "string": "c"
-    }
-}
