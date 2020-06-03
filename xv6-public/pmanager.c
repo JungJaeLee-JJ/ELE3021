@@ -109,7 +109,6 @@ void
 wrong_input()
 {
     printf(2, "It is Wrong input. \n");
-    //exit();
 }
 
 

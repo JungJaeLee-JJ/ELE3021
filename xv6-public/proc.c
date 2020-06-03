@@ -98,7 +98,7 @@ found:
   p->admin_mode = 0;
   p->limit_sz = -1;
   //시작시간 
-  p->tick = 0;
+  p->start_time_tick = ticks;
   //////////////////////////////////////////
 
   release(&ptable.lock);
@@ -566,8 +566,8 @@ list()
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
    if(p->pid != 0){
-	   if(strlen(p->name)>4) cprintf("%s\t|%d\t|%d\t\t|%d\t\t|%d\n",p->name,p->pid,p->tick,p->sz,p->limit_sz);
-	   else cprintf("%s\t\t|%d\t|%d\t\t|%d\t\t|%d\n", p->name,p->pid,p->tick,p->sz,p->limit_sz );
+	   if(strlen(p->name)>4) cprintf("%s\t|%d\t|%d\t\t|%d\t\t|%d\n",p->name,p->pid,ticks-p->start_time_tick,p->sz,p->limit_sz);
+	   else cprintf("%s\t\t|%d\t|%d\t\t|%d\t\t|%d\n", p->name,p->pid,ticks - p->start_time_tick,p->sz,p->limit_sz );
     }
   }
 	release(&ptable.lock);
