@@ -60,6 +60,9 @@ struct proc {
 
   //for limit sz
   int limit_sz;
+
+  //for timer;
+  int tick;
 };
 
 // Process memory is laid out contiguously, low addresses first:

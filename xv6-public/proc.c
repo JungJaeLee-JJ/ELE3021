@@ -97,6 +97,8 @@ found:
   //프로세스를 생성할 때는 admin모드는 꺼져있다.
   p->admin_mode = 0;
   p->limit_sz = -1;
+  //시작시간 
+  p->tick = 0;
   //////////////////////////////////////////
 
   release(&ptable.lock);
@@ -563,7 +565,7 @@ list()
   struct proc *p;
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-   if(p->pid != 0) cprintf("\t%s\t\t|%d\t|TIME(ms)\t|%d\t\t|%d\n", p->name,p->pid,p->sz,p->limit_sz );
+   if(p->pid != 0) cprintf("\t%s\t\t|%d\t%d\t|%d\t\t|%d\n", p->name,p->pid,p->tick,p->sz,p->limit_sz );
   }
 	release(&ptable.lock);
   return 0;

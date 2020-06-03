@@ -62,9 +62,10 @@ runcmd(struct cmd *cmd)
         exit();
      }
      
-    //exec2 명령어 실행
-    if(exec2(cmd->first_arg,&(cmd->first_arg),atoi(cmd->second_arg)) != 0){
-        printf(2, "EXEC fail!\n");
+    //프로세스 생성
+    if(fork1() == 0){
+      //exec2 명령어 실행
+       if(exec2(cmd->first_arg,&(cmd->first_arg),atoi(cmd->second_arg)) != 0) printf(2, "EXEC fail!\n");
     }
     break;
     
@@ -134,7 +135,6 @@ int
 fork1(void)
 {
   int pid;
-
   pid = fork();
   if(pid == -1)
     panic("fork");
@@ -166,8 +166,7 @@ main(void)
 
   // Read and run input commands.
   while(finish==0 && getcmd(buf, sizeof(buf)) >= 0){
-    if(fork1() == 0) runcmd(parsing(buf));
-    if(finish == 1) break;
+    runcmd(parsing(buf));
   }
   exit();
 }
@@ -213,15 +212,12 @@ parsing(char *s)
       index++;
   }
 
-  if(s[0]=='l' && s[1]=='i'&&s[2]=='s'&&s[3]==t) com
-	
-  
-  //type 지정
-  if( !strcmp(s, "list") ) command->type = 1;
-  else if( !strcmp(s, "kill") ) command->type = 2;
-  else if( !strcmp(s, "execute") )  command->type = 3;
-  else if( !strcmp(s, "memlim") ) command->type = 4;
-  else if( !strcmp(s, "exit") ) command->type = 5;
+  if(s[0]=='l' && s[1]=='i'&&s[2]=='s'&&s[3]=='t') command->type = 1;
+  else if (s[0]=='k' && s[1]=='i'&&s[2]=='l'&&s[3]=='l') command->type = 2;
+  else if (s[0]=='e' && s[1]=='x'&&s[2]=='i'&&s[3]=='t') command->type = 5;
+  else if (s[0]=='m' && s[1]=='e'&&s[2]=='m'&&s[3]=='l'&&s[4]=='i'&&s[5]=='m') command->type = 4;
+  else if (s[0]=='e' && s[1]=='x'&&s[2]=='e'&&s[3]=='c'&&s[4]=='u'&&s[5]=='t'&&s[6]=='e' ) command->type = 3;
+
   
   printf(2,"In parse type, argv1, argv2 : %d %s %s\n",command->type, command->first_arg, command->second_arg);
   return command;
