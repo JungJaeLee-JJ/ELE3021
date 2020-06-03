@@ -22,6 +22,8 @@ struct cmd {
 void panic(char*);
 int fork1(void);
 int exec_(char *path, char **argv, int stacksize);
+void wrong_input();
+struct cmd* parsing(char *s);
 
 int finish = 0;
 
@@ -145,7 +147,6 @@ main(void)
 {
   static char buf[100];
   int fd;
-  int  isadmin;
   
   //관리자 권한 획득
   if (getadmin("2016025823") == -1){
@@ -164,14 +165,12 @@ main(void)
   
 
   // Read and run input commands.
-  while(getcmd(buf, sizeof(buf)) >= 0){
+  while(finish==0 && getcmd(buf, sizeof(buf)) >= 0){
     if(fork1() == 0) runcmd(parsing(buf));
     if(finish == 1) break;
   }
   exit();
 }
-
-
 
 struct cmd*
 parsing(char *s)
@@ -188,23 +187,25 @@ parsing(char *s)
   //초기화
   memset(command,0,sizeof(*command));
   //memset(command->cmd_type_string,0,sizeof(char)*100);
-  memset(command->first_arg,0,sizeof(char)*100);
-  memset(command->second_arg,0,sizeof(char)*100);
+  memset(command->first_arg,0,sizeof(char*));
+  memset(command->second_arg,0,sizeof(char*));
 
 
   int index = 0;
 
+  //각 인자의 시작 인덱스를 저장한다.
   while(1){
       //띄어쓰기 간격발생
+	  //printf(2,"%s\n",s);
       if(s[index] == ' '){
          //첫번째 인자일 때
          if(command->first_arg == 0){
-             command->first_arg = s[index+1];
+             command->first_arg = &s[index+1];
          }
          //두번째 인자일 때
          else 
          {
-             command->second_arg = s[index+1];
+             command->second_arg = &s[index+1];
          }
       }
       //종료조건
@@ -212,6 +213,9 @@ parsing(char *s)
       index++;
   }
 
+  if(s[0]=='l' && s[1]=='i'&&s[2]=='s'&&s[3]==t) com
+	
+  
   //type 지정
   if( !strcmp(s, "list") ) command->type = 1;
   else if( !strcmp(s, "kill") ) command->type = 2;
