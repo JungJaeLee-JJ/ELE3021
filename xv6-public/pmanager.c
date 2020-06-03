@@ -31,11 +31,12 @@ void
 runcmd(struct cmd *cmd)
 {
   //명령어가 안들어온 경우
-  if(cmd == 0) exit();
+  if(cmd == 0) wrong_input();
 
   switch(cmd->type){
   default:
-    panic("runcmd");
+	wrong_input();
+   // panic("runcmd");
 
   case LIST:
     list();
@@ -45,11 +46,11 @@ runcmd(struct cmd *cmd)
     //입력 유효 검사
     if(cmd->first_arg == 0) {
         wrong_input();
-        exit();
+        //exit();
     }
  
     //KILL 명령어 수행
-    if(kill(atoi(cmd->first_arg) == 0)){
+	else if(kill(atoi(cmd->first_arg) == 0)){
         printf(2, "KILL SUCCESS !\n");
         wait();
     }
@@ -59,11 +60,11 @@ runcmd(struct cmd *cmd)
     //입력 유효 검사
     if(cmd->first_arg==0 || cmd->second_arg == 0){
         wrong_input();
-        exit();
+        //exit();
      }
      
     //프로세스 생성
-    if(fork1() == 0){
+	else if(fork1() == 0){
       //exec2 명령어 실행
        if(exec2(cmd->first_arg,&(cmd->first_arg),atoi(cmd->second_arg)) != 0) printf(2, "EXEC fail!\n");
     }
@@ -73,10 +74,9 @@ runcmd(struct cmd *cmd)
     //입력 유효 검사
     if(cmd->first_arg==0 || cmd->second_arg == 0){
         wrong_input();
-        exit();
     }
 
-    if( setmemorylimit(atoi(cmd->first_arg),atoi(cmd->second_arg)) == 0 ){
+	else if( setmemorylimit(atoi(cmd->first_arg),atoi(cmd->second_arg)) == 0 ){
         printf(2, "Success to set process(pid : %d) Memory Limit as %d\n",atoi(cmd->first_arg),atoi(cmd->second_arg));
     }
     else{
@@ -87,10 +87,10 @@ runcmd(struct cmd *cmd)
   case EXIT:
     printf(2,"\n");
     finish = 1;
-    exit();
+    //exit();
     break;
   }
-  exit();
+  //exit();
 }
 
 
@@ -109,7 +109,7 @@ void
 wrong_input()
 {
     printf(2, "It is Wrong input. \n");
-    exit();
+    //exit();
 }
 
 

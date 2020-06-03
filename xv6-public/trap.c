@@ -121,10 +121,10 @@ trap(struct trapframe *tf)
   if(ticks%100 == 0) priority_boosting();
 
   #else
-  if(myproc() && myproc()->state == RUNNING &&
-     tf->trapno == T_IRQ0+IRQ_TIMER){
-      myproc()->tick++;
-      yield();
+  //myproc()->tick++;
+  if(myproc() && myproc()->state == RUNNING){
+	  myproc()->tick++;
+     if(tf->trapno == T_IRQ0+IRQ_TIMER) yield();
   }
   #endif
   // Check if the process has been killed since we yielded

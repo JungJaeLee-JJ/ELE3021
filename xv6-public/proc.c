@@ -561,11 +561,14 @@ setmemorylimit(int pid, int limit)
 int
 list()
 {
-  cprintf("\tNAME\t\t|PID\t|TIME(ms)\t|MEMORY(bytes)\t|MEMLIM(bytes)\n");
+  cprintf("NAME\t\t|PID\t|TIME(ms)\t|MEMORY(bytes)\t|MEMLIM(bytes)\n");
   struct proc *p;
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-   if(p->pid != 0) cprintf("\t%s\t\t|%d\t%d\t|%d\t\t|%d\n", p->name,p->pid,p->tick,p->sz,p->limit_sz );
+   if(p->pid != 0){
+	   if(strlen(p->name)>4) cprintf("%s\t|%d\t|%d\t\t|%d\t\t|%d\n",p->name,p->pid,p->tick,p->sz,p->limit_sz);
+	   else cprintf("%s\t\t|%d\t|%d\t\t|%d\t\t|%d\n", p->name,p->pid,p->tick,p->sz,p->limit_sz );
+    }
   }
 	release(&ptable.lock);
   return 0;
