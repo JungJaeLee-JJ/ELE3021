@@ -21,7 +21,6 @@ struct cmd {
 
 void panic(char*);
 int fork1(void);
-int exec_(char *path, char **argv, int stacksize);
 void wrong_input();
 struct cmd* parsing(char *s);
 
@@ -30,13 +29,13 @@ int finish = 0;
 void
 runcmd(struct cmd *cmd)
 {
-  //명령어가 안들어온 경우
+  //명령어가 입력되지 않은 경우
   if(cmd == 0) wrong_input();
 
   switch(cmd->type){
   default:
 	wrong_input();
-   // panic("runcmd");
+	break;
 
   case LIST:
     list();
@@ -46,36 +45,31 @@ runcmd(struct cmd *cmd)
     //입력 유효 검사
     if(cmd->first_arg == 0) {
         wrong_input();
-        //exit();
     }
  
     //KILL 명령어 수행
-	else if(kill(atoi(cmd->first_arg) == 0)){
-        printf(2, "KILL SUCCESS !\n");
+	else if(kill(atoi(cmd->first_arg)) == 0){
+        printf(2, "Success to kill %d\n",atoi(cmd->first_arg));
         wait();
-    }
+    }else{
+		printf(2,"Fail to kill %d\n",atoi(cmd->first_arg));
+	}
     break;
 
   case EXEC2:
-    //입력 유효 검사
-    if(cmd->first_arg==0 || cmd->second_arg == 0){
-        wrong_input();
-        //exit();
-     }
-     
+	//인자가 2개일때
+	if(cmd->second_arg != 0) *(cmd->second_arg-1) = 0;
     //프로세스 생성
-	else if(fork1() == 0){
-      //exec2 명령어 실행
-       if(exec2(cmd->first_arg,&(cmd->first_arg),atoi(cmd->second_arg)) != 0) printf(2, "EXEC fail!\n");
+	 if(fork1() == 0){
+      //exec2 명령어 실
+		if(exec2(cmd->first_arg,&(cmd->first_arg),atoi(cmd->second_arg)) == -1) printf(2, "EXEC fail!\n");
     }
-    break;
-    
+    break; 
   case MEMLIMIT:
     //입력 유효 검사
     if(cmd->first_arg==0 || cmd->second_arg == 0){
         wrong_input();
     }
-
 	else if( setmemorylimit(atoi(cmd->first_arg),atoi(cmd->second_arg)) == 0 ){
         printf(2, "Success to set process(pid : %d) Memory Limit as %d\n",atoi(cmd->first_arg),atoi(cmd->second_arg));
     }
@@ -83,14 +77,11 @@ runcmd(struct cmd *cmd)
         printf(2,"Fail to set Memory Limit\n");
     }
     break;
-
   case EXIT:
-    printf(2,"\n");
+    printf(2,"Terminate Pmanager \n");
     finish = 1;
-    //exit();
     break;
   }
-  //exit();
 }
 
 
@@ -111,17 +102,6 @@ wrong_input()
     printf(2, "It is Wrong input. \n");
 }
 
-
-int
-exec_(char *path, char **argv, int stacksize)
-{
-  int pid;
-
-  pid = exec2(path,argv,stacksize);
-  if(pid == -1)
-    panic("exec2");
-  return pid;
-}
 
 void
 panic(char *s)
@@ -178,13 +158,9 @@ parsing(char *s)
 
   //데이터 동적할당
   command = malloc(sizeof(*command));
-  //command->cmd_type_string = malloc(sizeof(char)*100);
-  //command->first_arg = malloc(sizeof(char)*100);
-  //command->second_arg = malloc(sizeof(char)*100);
   
   //초기화
   memset(command,0,sizeof(*command));
-  //memset(command->cmd_type_string,0,sizeof(char)*100);
   memset(command->first_arg,0,sizeof(char*));
   memset(command->second_arg,0,sizeof(char*));
 
@@ -218,7 +194,7 @@ parsing(char *s)
   else if (s[0]=='e' && s[1]=='x'&&s[2]=='e'&&s[3]=='c'&&s[4]=='u'&&s[5]=='t'&&s[6]=='e' ) command->type = 3;
 
   
-  printf(2,"In parse type, argv1, argv2 : %d %s %s\n",command->type, command->first_arg, command->second_arg);
+  //printf(2," %d %s %s\n",command->type, command->first_arg, command->second_arg);
   return command;
 }
 

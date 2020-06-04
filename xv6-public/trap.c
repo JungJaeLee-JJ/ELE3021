@@ -122,10 +122,7 @@ trap(struct trapframe *tf)
 
   #else
   //myproc()->tick++;
-  if(myproc() && myproc()->state == RUNNING){
-	  myproc()->tick++;
-     if(tf->trapno == T_IRQ0+IRQ_TIMER) yield();
-  }
+  if(myproc() && myproc()->state == RUNNING && tf->trapno == T_IRQ0+IRQ_TIMER) yield();
   #endif
   // Check if the process has been killed since we yielded
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)

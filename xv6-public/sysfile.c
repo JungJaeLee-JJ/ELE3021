@@ -427,9 +427,11 @@ sys_exec2(void)
   int i;
   uint uargv, uarg;
 
+  //cprintf("sysexec2 !\n");
   if(argstr(0, &path) < 0 || argint(1, (int*)&uargv) < 0){
     return -1;
   }
+  //cprintf("sys exec : %s %d\n",path,uargv);
   memset(argv, 0, sizeof(argv));
   for(i=0;; i++){
     if(i >= NELEM(argv))

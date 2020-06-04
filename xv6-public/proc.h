@@ -58,11 +58,16 @@ struct proc {
   //for adminmode
   int admin_mode;
 
+  //for custrom_stack_size;
+  int custom_stack_size;
+
   //for limit sz
   int limit_sz;
 
   //for timer;
   int start_time_tick;
+
+  char* smemaddress;
 };
 
 // Process memory is laid out contiguously, low addresses first:

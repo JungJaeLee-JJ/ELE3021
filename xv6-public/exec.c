@@ -19,6 +19,8 @@ exec(char *path, char **argv)
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
 
+  //cprintf("%s , %s \n",path,*argv);
+
   begin_op();
 
   if((ip = namei(path)) == 0){
@@ -70,6 +72,7 @@ exec(char *path, char **argv)
 
   // Push argument strings, prepare rest of stack in ustack.
   for(argc = 0; argv[argc]; argc++) {
+	  //cprintf("%s \n",argv[argc]);
     if(argc >= MAXARG)
       goto bad;
     sp = (sp - (strlen(argv[argc]) + 1)) & ~3;
@@ -99,6 +102,13 @@ exec(char *path, char **argv)
   curproc->sz = sz;
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
+
+  //Admin,stacksize,memory limit initailize
+  curproc->admin_mode = 0;
+  curproc->limit_sz = 0;
+  curproc->custom_stack_size = 1;
+
+
   switchuvm(curproc);
   freevm(oldpgdir);
   return 0;
@@ -126,12 +136,17 @@ exec2(char *path, char **argv, int stacksize)
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
 
+  //cprintf("%s , %s, %d\n",path,*argv,stacksize);
+  //cprintf("exec : %d\n",stacksize);
+
   //admin mode가 아닐때
   if (curproc->admin_mode==0){
     return -1;
   }
 
   begin_op();
+
+ 	//cprintf("path : %s\n",path);
 
   if((ip = namei(path)) == 0){
     end_op();
@@ -174,14 +189,18 @@ exec2(char *path, char **argv, int stacksize)
 
   // Allocate two pages at the next page boundary.
   // Make the first inaccessible.  Use the second as the user stack.
+
+  //cprintf("sz before\n");
   sz = PGROUNDUP(sz);
-  if((sz = allocuvm(pgdir, sz, sz + 2*stacksize*PGSIZE)) == 0)
+  if((sz = allocuvm(pgdir, sz, sz + (stacksize+1)*PGSIZE)) == 0)
     goto bad;
-  clearpteu(pgdir, (char*)(sz - 2*stacksize*PGSIZE));
+  clearpteu(pgdir, (char*)(sz - (stacksize+1)*PGSIZE));
   sp = sz;
+  //cprintf("sz after\n");
 
   // Push argument strings, prepare rest of stack in ustack.
   for(argc = 0; argv[argc]; argc++) {
+	  cprintf("%s\n",argv[argc]);
     if(argc >= MAXARG)
       goto bad;
     sp = (sp - (strlen(argv[argc]) + 1)) & ~3;
@@ -190,6 +209,8 @@ exec2(char *path, char **argv, int stacksize)
     ustack[3+argc] = sp;
   }
   ustack[3+argc] = 0;
+
+  //cprintf("argv push done \n");
 
   ustack[0] = 0xffffffff;  // fake return PC
   ustack[1] = argc;
@@ -211,6 +232,14 @@ exec2(char *path, char **argv, int stacksize)
   curproc->sz = sz;
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
+
+  //Admin,stacksize,memory limit initailize
+  curproc->admin_mode = 0;
+  curproc->limit_sz = 0;
+  curproc->custom_stack_size = stacksize;
+
+  cprintf("initailizing done\n");
+
   switchuvm(curproc);
   freevm(oldpgdir);
   return 0;

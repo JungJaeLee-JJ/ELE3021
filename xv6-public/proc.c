@@ -96,7 +96,8 @@ found:
 
   //프로세스를 생성할 때는 admin모드는 꺼져있다.
   p->admin_mode = 0;
-  p->limit_sz = -1;
+  p->limit_sz = 0;
+  p->custom_stack_size = 1;
   //시작시간 
   p->start_time_tick = ticks;
   //////////////////////////////////////////
@@ -176,7 +177,7 @@ growproc(int n)
   sz = curproc->sz;
 
   //limit가 설정이 되어 있고, 할당될 사이즈가 limit보다 더 커질려고 할 때 
-  if (curproc->limit_sz != -1 && n+sz >curproc->limit_sz ){
+  if (curproc->limit_sz !=0 && n+sz >curproc->limit_sz ){
     return -1;
   }
   if(n > 0){
@@ -216,6 +217,11 @@ fork(void)
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
+
+  //부모 프로세스와 같은 값으로 설정해준다.
+  np->admin_mode = curproc->admin_mode;
+  np->limit_sz = curproc->limit_sz;
+  np->custom_stack_size = curproc->custom_stack_size;
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
@@ -566,7 +572,7 @@ list()
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
    if(p->pid != 0){
-	   if(strlen(p->name)>4) cprintf("%s\t|%d\t|%d\t\t|%d\t\t|%d\n",p->name,p->pid,ticks-p->start_time_tick,p->sz,p->limit_sz);
+	   if(strlen(p->name)>6) cprintf("%s\t|%d\t|%d\t\t|%d\t\t|%d\n",p->name,p->pid,ticks-p->start_time_tick,p->sz,p->limit_sz);
 	   else cprintf("%s\t\t|%d\t|%d\t\t|%d\t\t|%d\n", p->name,p->pid,ticks - p->start_time_tick,p->sz,p->limit_sz );
     }
   }
@@ -690,6 +696,7 @@ kill(int pid)
 
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+	  //cprintf("%d %d\n",pid,p->pid);
     if(p->pid == pid){
       p->killed = 1;
       // Wake process from sleep if necessary.

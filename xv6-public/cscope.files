@@ -12,6 +12,7 @@
 ./kill.c
 ./fcntl.h
 ./trap.c
+./p2_admin_test.c
 ./mlfq_test.c
 ./sysfile.c
 ./traps.h
@@ -24,6 +25,7 @@
 ./ln.c
 ./kalloc.c
 ./sh.c
+./p2_memory_test.c
 ./vm.c
 ./spinlock.c
 ./entry.S
@@ -36,6 +38,7 @@
 ./user.h
 ./printf.c
 ./file.c
+./pmanager.c
 ./mp.h
 ./log.c
 ./fs.h
@@ -49,6 +52,7 @@
 ./ls.c
 ./grep.c
 ./kbd.h
+./vectors.S
 ./ioapic.c
 ./trapasm.S
 ./sleeplock.c
@@ -64,10 +68,12 @@
 ./elf.h
 ./types.h
 ./swtch.S
+./p2_shmem_test.c
 ./syscall.c
 ./mmu.h
 ./memlayout.h
 ./usys.S
+./p2_stack_test.c
 ./rm.c
 ./asm.h
 ./bootasm.S
