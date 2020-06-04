@@ -30,7 +30,7 @@ int getadmin(char *password);
 int exec2(char*, char**, int stacksize);
 int setmemorylimit(int pid , int limit);
 int list(void);
-char* getshmem (int pid);
+char* getshmem(int pid);
 
 
 

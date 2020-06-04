@@ -81,11 +81,11 @@ void
 printf(int fd, const char *s, ...)
 {
   write(fd, s, strlen(s));
-  59:	68 6c 04 00 00       	push   $0x46c
+  59:	68 74 04 00 00       	push   $0x474
   5e:	e8 6d 01 00 00       	call   1d0 <strlen>
   63:	83 c4 0c             	add    $0xc,%esp
   66:	50                   	push   %eax
-  67:	68 6c 04 00 00       	push   $0x46c
+  67:	68 74 04 00 00       	push   $0x474
   6c:	6a 01                	push   $0x1
   6e:	e8 3f 03 00 00       	call   3b2 <write>
   73:	83 c4 10             	add    $0x10,%esp
@@ -150,11 +150,11 @@ printf(int fd, const char *s, ...)
 {
   write(fd, s, strlen(s));
   b8:	83 ec 0c             	sub    $0xc,%esp
-  bb:	68 9e 04 00 00       	push   $0x49e
+  bb:	68 a6 04 00 00       	push   $0x4a6
   c0:	e8 0b 01 00 00       	call   1d0 <strlen>
   c5:	83 c4 0c             	add    $0xc,%esp
   c8:	50                   	push   %eax
-  c9:	68 9e 04 00 00       	push   $0x49e
+  c9:	68 a6 04 00 00       	push   $0x4a6
   ce:	6a 01                	push   $0x1
   d0:	e8 dd 02 00 00       	call   3b2 <write>
     printf(1, "wait got too many\n");
@@ -174,11 +174,11 @@ printf(int fd, const char *s, ...)
 {
   write(fd, s, strlen(s));
   e0:	83 ec 0c             	sub    $0xc,%esp
-  e3:	68 ac 04 00 00       	push   $0x4ac
+  e3:	68 b4 04 00 00       	push   $0x4b4
   e8:	e8 e3 00 00 00       	call   1d0 <strlen>
   ed:	83 c4 0c             	add    $0xc,%esp
   f0:	50                   	push   %eax
-  f1:	68 ac 04 00 00       	push   $0x4ac
+  f1:	68 b4 04 00 00       	push   $0x4b4
   f6:	6a 01                	push   $0x1
   f8:	e8 b5 02 00 00       	call   3b2 <write>
       exit();
@@ -202,11 +202,11 @@ printf(int fd, const char *s, ...)
 {
   write(fd, s, strlen(s));
  107:	83 ec 0c             	sub    $0xc,%esp
- 10a:	68 77 04 00 00       	push   $0x477
+ 10a:	68 7f 04 00 00       	push   $0x47f
  10f:	e8 bc 00 00 00       	call   1d0 <strlen>
  114:	83 c4 0c             	add    $0xc,%esp
  117:	50                   	push   %eax
- 118:	68 77 04 00 00       	push   $0x477
+ 118:	68 7f 04 00 00       	push   $0x47f
  11d:	6a 01                	push   $0x1
  11f:	e8 8e 02 00 00       	call   3b2 <write>
   }
@@ -223,11 +223,11 @@ printf(int fd, const char *s, ...)
 {
   write(fd, s, strlen(s));
  129:	83 ec 0c             	sub    $0xc,%esp
- 12c:	68 8b 04 00 00       	push   $0x48b
+ 12c:	68 93 04 00 00       	push   $0x493
  131:	e8 9a 00 00 00       	call   1d0 <strlen>
  136:	83 c4 0c             	add    $0xc,%esp
  139:	50                   	push   %eax
- 13a:	68 8b 04 00 00       	push   $0x48b
+ 13a:	68 93 04 00 00       	push   $0x493
  13f:	6a 01                	push   $0x1
  141:	e8 6c 02 00 00       	call   3b2 <write>
     }
@@ -913,3 +913,9 @@ SYSCALL(list)
  462:	b8 1c 00 00 00       	mov    $0x1c,%eax
  467:	cd 40                	int    $0x40
  469:	c3                   	ret    
+
+0000046a <getshmem>:
+SYSCALL(getshmem)
+ 46a:	b8 1d 00 00 00       	mov    $0x1d,%eax
+ 46f:	cd 40                	int    $0x40
+ 471:	c3                   	ret    

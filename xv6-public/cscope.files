@@ -32,6 +32,7 @@
 ./lapic.c
 ./memide.c
 ./forktest.c
+./vm.h
 ./proc.h
 ./x86.h
 ./picirq.c
@@ -52,7 +53,6 @@
 ./ls.c
 ./grep.c
 ./kbd.h
-./vectors.S
 ./ioapic.c
 ./trapasm.S
 ./sleeplock.c

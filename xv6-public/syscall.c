@@ -110,7 +110,7 @@ extern int sys_getadmin(void);
 extern int sys_exec2(void);
 extern int sys_setmemorylimit(void);
 extern int sys_list(void);
-extern char* sys_getshmem (void);
+extern int sys_getshmem (void);
 
 
 static int (*syscalls[])(void) = {

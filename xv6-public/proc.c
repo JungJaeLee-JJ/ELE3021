@@ -6,8 +6,8 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
-#include "vm.h"
 
+extern pte_t* walkpgdir(pde_t *pgdir,const void *va,int alloc);
 
 struct {
   struct spinlock lock;
@@ -574,20 +574,20 @@ getshmem(int pid)
 {
   struct proc *p;
   char * return_address = 0;
-  char * a;
+  uint * a;
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == pid) {
       return_address = p->shared_memory_address;
       //본인 프로세스의 접근할 때 - 읽기, 쓰기
       if(p->pid == myproc()->pid){
-        a = walkpgdir(myproc()->pgdir, (char*)PGROUNDDOWN((uint)add),1);
+        a = walkpgdir(myproc()->pgdir, (char*)PGROUNDDOWN((uint)return_address),1);
         *a = V2P(p->shared_memory_address) | PTE_P | PTE_U | PTE_W ;
       }
       //다른 프로세스에 접근 할 때 - 읽기
       else{
-        a = walkpgdir(myproc()->pgdir, (char*)PGROUNDDOWN((uint)add),1);
-        *a = V2P(p->shared_memory_address) | PTE_P | PTE_U | PTE_W ;
+        a = walkpgdir(myproc()->pgdir, (char*)PGROUNDDOWN((uint)return_address),1);
+        *a = V2P(p->shared_memory_address) | PTE_P | PTE_U ;
       }
     }
   }
