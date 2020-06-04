@@ -126,6 +126,7 @@ int             setpriority(int pid, int priority);
 int             getadmin(char *password);
 int             setmemorylimit(int pid , int limit);
 int             list(void);
+char *          getshmem (int pid);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

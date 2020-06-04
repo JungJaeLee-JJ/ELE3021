@@ -21,6 +21,9 @@ exec(char *path, char **argv)
 
   //cprintf("%s , %s \n",path,*argv);
 
+  //for shard memory
+  curproc->shared_memory_address = kalloc();
+
   begin_op();
 
   if((ip = namei(path)) == 0){
@@ -135,6 +138,9 @@ exec2(char *path, char **argv, int stacksize)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
+
+  //for shard memory
+  curproc->shared_memory_address = kalloc();
 
   //cprintf("%s , %s, %d\n",path,*argv,stacksize);
   //cprintf("exec : %d\n",stacksize);

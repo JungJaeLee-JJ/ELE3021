@@ -6,6 +6,8 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "vm.h"
+
 
 struct {
   struct spinlock lock;
@@ -206,6 +208,10 @@ fork(void)
   if((np = allocproc()) == 0){
     return -1;
   }
+
+  //커널 주소 저장
+  curproc->shared_memory_address = kalloc();
+
 
   // Copy process state from proc.
   if((np->pgdir = copyuvm(curproc->pgdir, curproc->sz)) == 0){
@@ -561,6 +567,32 @@ setmemorylimit(int pid, int limit)
   if(target->sz > limit) return -1;
   target->limit_sz = limit;
   return 0;
+}
+
+char*
+getshmem(int pid)
+{
+  struct proc *p;
+  char * return_address = 0;
+  char * a;
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid) {
+      return_address = p->shared_memory_address;
+      //본인 프로세스의 접근할 때 - 읽기, 쓰기
+      if(p->pid == myproc()->pid){
+        a = walkpgdir(myproc()->pgdir, (char*)PGROUNDDOWN((uint)add),1);
+        *a = V2P(p->shared_memory_address) | PTE_P | PTE_U | PTE_W ;
+      }
+      //다른 프로세스에 접근 할 때 - 읽기
+      else{
+        a = walkpgdir(myproc()->pgdir, (char*)PGROUNDDOWN((uint)add),1);
+        *a = V2P(p->shared_memory_address) | PTE_P | PTE_U | PTE_W ;
+      }
+    }
+  }
+  release(&ptable.lock);
+  return return_address;
 }
 
 

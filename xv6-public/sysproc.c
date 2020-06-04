@@ -143,3 +143,11 @@ sys_list(void)
 {
   return list();
 }
+
+char*
+sys_getshmem(void)
+{
+  int pid;
+  if(argint(0,&pid)<0) return -1;
+  return getshmem(pid);
+}

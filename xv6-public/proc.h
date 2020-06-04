@@ -67,7 +67,8 @@ struct proc {
   //for timer;
   int start_time_tick;
 
-  char* smemaddress;
+  //for shared memory
+  char* shared_memory_address;
 };
 
 // Process memory is laid out contiguously, low addresses first:
