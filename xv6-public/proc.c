@@ -209,7 +209,7 @@ fork(void)
     return -1;
   }
 
-  //커널 주소 저장
+  //새 페이지 할당 및  주소 저장
   curproc->shared_memory_address = kalloc();
 
 
@@ -536,6 +536,7 @@ getadmin(char *password)
   char my_number[10] = "2016025823";
   int flag = 0;
   for(int i=0;i<10;i++){
+	  //cprintf("%c , %c \n",my_number[i],password[i]);
     if(my_number[i] == password[i]) flag++;
   }
   if(flag == 10){
@@ -603,7 +604,7 @@ list()
   struct proc *p;
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-   if(p->pid != 0){
+   if(p->pid != 0 || p->state !=UNUSED){
 	   if(strlen(p->name)>6) cprintf("%s\t|%d\t|%d\t\t|%d\t\t|%d\n",p->name,p->pid,ticks-p->start_time_tick,p->sz,p->limit_sz);
 	   else cprintf("%s\t\t|%d\t|%d\t\t|%d\t\t|%d\n", p->name,p->pid,ticks - p->start_time_tick,p->sz,p->limit_sz );
     }

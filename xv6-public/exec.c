@@ -206,7 +206,7 @@ exec2(char *path, char **argv, int stacksize)
 
   // Push argument strings, prepare rest of stack in ustack.
   for(argc = 0; argv[argc]; argc++) {
-	  cprintf("%s\n",argv[argc]);
+	  //cprintf("%s\n",argv[argc]);
     if(argc >= MAXARG)
       goto bad;
     sp = (sp - (strlen(argv[argc]) + 1)) & ~3;
@@ -244,7 +244,7 @@ exec2(char *path, char **argv, int stacksize)
   curproc->limit_sz = 0;
   curproc->custom_stack_size = stacksize;
 
-  cprintf("initailizing done\n");
+  //cprintf("initailizing done\n");
 
   switchuvm(curproc);
   freevm(oldpgdir);
