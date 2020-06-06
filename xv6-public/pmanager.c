@@ -25,6 +25,8 @@ void wrong_input();
 struct cmd* parsing(char *s);
 
 int finish = 0;
+//cmd 자료형을 만든다.
+struct cmd* command;
 
 void
 runcmd(struct cmd *cmd)
@@ -78,6 +80,7 @@ runcmd(struct cmd *cmd)
     }
     break;
   case EXIT:
+	//wait();
     printf(2,"Terminate Pmanager \n");
     finish = 1;
     break;
@@ -126,6 +129,9 @@ main(void)
 {
   static char buf[100];
   int fd;
+
+  //데이터 동적할당
+  command = malloc(sizeof(*command));
   
   //관리자 권한 획득
   if (getadmin("2016025823") == -1){
@@ -147,6 +153,7 @@ main(void)
   while(finish==0 && getcmd(buf, sizeof(buf)) >= 0){
     runcmd(parsing(buf));
   }
+  free(command);
   exit();
 }
 
@@ -154,10 +161,10 @@ struct cmd*
 parsing(char *s)
 {
   //cmd 자료형을 만든다.
-  struct cmd* command;
+  //struct cmd* command;
 
   //데이터 동적할당
-  command = malloc(sizeof(*command));
+  //command = malloc(sizeof(*command));
   
   //초기화
   memset(command,0,sizeof(*command));

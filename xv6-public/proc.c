@@ -8,6 +8,7 @@
 #include "spinlock.h"
 
 extern pte_t* walkpgdir(pde_t *pgdir,const void *va,int alloc);
+//extern void free(void *ap);
 
 struct {
   struct spinlock lock;
@@ -210,7 +211,7 @@ fork(void)
   }
 
   //새 페이지 할당 및  주소 저장
-  curproc->shared_memory_address = kalloc();
+  np->shared_memory_address = kalloc();
 
 
   // Copy process state from proc.
@@ -324,6 +325,7 @@ wait(void)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+		kfree(p->shared_memory_address);
         release(&ptable.lock);
         return pid;
       }
