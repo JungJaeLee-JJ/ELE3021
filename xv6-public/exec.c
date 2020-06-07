@@ -22,7 +22,7 @@ exec(char *path, char **argv)
   //cprintf("%s , %s \n",path,*argv);
 
   //for shard memory
-  curproc->shared_memory_address = kalloc();
+  if(curproc->shared_memory_address==0) curproc->shared_memory_address = kalloc();
 
   begin_op();
 
@@ -140,7 +140,7 @@ exec2(char *path, char **argv, int stacksize)
   struct proc *curproc = myproc();
 
   //for shard memory
-  curproc->shared_memory_address = kalloc();
+  if(curproc->shared_memory_address==0)curproc->shared_memory_address = kalloc();
 
   //cprintf("%s , %s, %d\n",path,*argv,stacksize);
   //cprintf("exec : %d\n",stacksize);

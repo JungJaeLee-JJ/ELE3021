@@ -103,6 +103,8 @@ found:
   p->custom_stack_size = 1;
   //시작시간 
   p->start_time_tick = ticks;
+  //공유메모리
+  p->shared_memory_address = 0;
   //////////////////////////////////////////
 
   release(&ptable.lock);
