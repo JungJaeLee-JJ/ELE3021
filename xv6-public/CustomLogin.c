@@ -14,7 +14,10 @@ void read_user_list(){
     for(int i=0;i<10;i++){
         user_name_list[i] = (char *)malloc(20);
         user_password_list[i] = (char *)malloc(20);
+        memset(user_name_list[i],0,sizeof(char)*20);
+        memset(user_password_list[i],0,sizeof(char)*20);
     }
+
 
     //파일이 존재하지 않을때
     int fd;
@@ -22,11 +25,19 @@ void read_user_list(){
     int offset,read_count;
     
     if((fd = open("userlist.txt", O_RDWR))<0){
+        close(fd);
         fd = open("userlist.txt", O_CREATE|O_RDWR);
         strcpy(user_name_list[0],"root");
         strcpy(user_password_list[0],"1234");
-        write(fd,"root",sizeof(char)*20);
-        write(fd,"1234",sizeof(char)*20);    
+        for(int i=0;i<10;i++){
+            if(i==0){
+                write(fd,"root",sizeof(char)*20);
+                write(fd,"1234",sizeof(char)*20);
+            }else{
+                write(fd,user_name_list[i],sizeof(char)*20);
+                write(fd,user_password_list[i],sizeof(char)*20);
+            }
+         }   
     }else{
         for(int i=0;;i++)
         {
