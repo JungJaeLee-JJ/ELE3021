@@ -552,6 +552,10 @@ int useradd(char *username,char *password){
   char fileuserid[20];
   char filepassword[20];
 
+  cprintf("%s",username);
+  cprintf("%s",password);
+
+
   begin_op();
   if((ip = namei("./userlist.txt")) == 0){
       end_op();

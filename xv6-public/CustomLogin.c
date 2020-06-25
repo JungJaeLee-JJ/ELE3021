@@ -33,7 +33,7 @@ void read_user_list(){
         strcpy(user_name_list[0],"root\n");
         strcpy(user_password_list[0],"1234\n");
         for(int i=0;i<10;i++){
-            printf(1,"%s %s\n",user_name_list[i],user_password_list[i]);
+            printf(1,"%s%s",user_name_list[i],user_password_list[i]);
             write(fd,user_name_list[i],sizeof(char)*20);
             write(fd,user_password_list[i],sizeof(char)*20);
         }
