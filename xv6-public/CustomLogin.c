@@ -1,8 +1,10 @@
 #include "types.h"
 #include "user.h"
-#include "fcntl.h"
-#include "file.h"
+#include "spinlock.h"
+#include "sleeplock.h"
 #include "fs.h"
+#include "file.h"
+#include "fcntl.h"
 
 char * user_name_list[10];
 char * user_password_list[10];
@@ -19,7 +21,7 @@ void read_user_list(){
     //파일이 존재하지 않을때
     int fd;
     //struct stat st;
-    int offset,read_count;
+    int read_count;
     
     if((fd = open("userlist.txt", O_RDWR))<0){
         fd = open("userlist.txt", O_CREATE|O_RDWR);
