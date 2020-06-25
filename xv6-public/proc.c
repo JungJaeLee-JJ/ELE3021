@@ -536,6 +536,16 @@ procdump(void)
   }
 }
 
+
+int
+strcmp(const char *p, const char *q)
+{
+  while(*p && *p == *q)
+    p++, q++;
+  return (uchar)*p - (uchar)*q;
+}
+
+
 int useradd(char *username,char *password){
   
   struct inode *ip;
@@ -581,14 +591,6 @@ int useradd(char *username,char *password){
   iunlock(ip);
   end_op();
   return -1;
-}
-
-int
-strcmp(const char *p, const char *q)
-{
-  while(*p && *p == *q)
-    p++, q++;
-  return (uchar)*p - (uchar)*q;
 }
 
 
