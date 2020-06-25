@@ -28,15 +28,11 @@ void read_user_list(){
         write(fd,"root",sizeof(char)*20);
         write(fd,"1234",sizeof(char)*20);    
     }else{
-        //fstat(fd,&st);
         for(int i=0;;i++)
         {
-            //다 읽은 경우
-            if(offset >= st.size) break;
-            
             //읽기
-            if(0<(read_count = read(fd,user_name_list[i],20))) offset = offset + read_count;
-            if(0<(read_count = read(fd,user_password_list[i],20))) offset = offset + read_count;
+            if((read_count = read(fd,user_name_list[i],20))<=0) break;
+            if((read_count = read(fd,user_password_list[i],20))<=0) break;
         }
     }
     close(fd);
@@ -50,8 +46,6 @@ int check(char *id, char *password) {
     }
     return 0;
 }
-
-
 
 
 int main(void){
