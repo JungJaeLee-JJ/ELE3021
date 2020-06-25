@@ -572,8 +572,8 @@ int useradd(char *username,char *password){
     memset(filepassword,0,sizeof(char)*20);
     
     //읽어온다. 파일 크기가 정해져 있기 때문에, 조건문으로 얼마나 읽어왔는지 보지 않았다.
-    readi(ip,fileuserid,i*20,20);
-    readi(ip,filepassword,i*20+20,20);
+    readi(ip,fileuserid,i*40,20);
+    readi(ip,filepassword,i*40+20,20);
 
     //동일한 유저가 있을 때
     if(!strcmp(fileuserid,username)) {
@@ -590,11 +590,11 @@ int useradd(char *username,char *password){
     memset(filepassword,0,sizeof(char)*20);
     
     //읽어온다. 파일 크기가 정해져 있기 때문에, 조건문으로 얼마나 읽어왔는지 보지 않았다.
-    readi(ip,fileuserid,i*sizeof(char)*20,20);
-    readi(ip,filepassword,i*sizeof(char)*20+20,20);
-    cprintf("%s\n",fileuserid);
-    cprintf("%s\n",filepassword);
-    if(fileuserid[0] == 0 && writei(ip,username,i*20,20) > 0 && writei(ip,password,i*20+20,20)>0){
+    readi(ip,fileuserid,i*40,20);
+    readi(ip,filepassword,i*40+20,20);
+    cprintf("%s",fileuserid);
+    cprintf("%s",filepassword);
+    if(fileuserid[0] == 0 && writei(ip,username,i*40,20) > 0 && writei(ip,password,i*40+20,20)>0){
         iunlock(ip);
         end_op();
         return 0;
@@ -635,7 +635,7 @@ int userdel(char *username){
     if(!strcmp(fileuserid,username)){
       memset(fileuserid,0,sizeof(char)*20);
       memset(filepassword,0,sizeof(char)*20);
-      if(writei(ip,fileuserid,i*20,20) > 0 && writei(ip,filepassword,i*20+20,20) > 0) {
+      if(writei(ip,fileuserid,i*40,20) > 0 && writei(ip,filepassword,i*40+20,20) > 0) {
         iunlock(ip);
         end_op();
         return 0;
