@@ -42,7 +42,7 @@ main(void)
   42:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
 
   for(;;){
-    printf(1, "init: starting sh\n");
+    printf(1, "init: starting login\n");
   48:	83 ec 08             	sub    $0x8,%esp
   4b:	68 a8 07 00 00       	push   $0x7a8
   50:	6a 01                	push   $0x1
@@ -56,7 +56,7 @@ main(void)
   dup(0);  // stderr
 
   for(;;){
-    printf(1, "init: starting sh\n");
+    printf(1, "init: starting login\n");
     pid = fork();
   61:	89 c3                	mov    %eax,%ebx
     if(pid < 0){
@@ -68,8 +68,8 @@ main(void)
   65:	74 3d                	je     a4 <main+0xa4>
   67:	89 f6                	mov    %esi,%esi
   69:	8d bc 27 00 00 00 00 	lea    0x0(%edi,%eiz,1),%edi
-      exec("sh", argv);
-      printf(1, "init: exec sh failed\n");
+      exec("CustomLogin", argv);
+      printf(1, "init: exec login failed\n");
       exit();
     }
     while((wpid=wait()) >= 0 && wpid != pid)
@@ -80,36 +80,36 @@ main(void)
   7b:	74 cb                	je     48 <main+0x48>
       printf(1, "zombie!\n");
   7d:	83 ec 08             	sub    $0x8,%esp
-  80:	68 e7 07 00 00       	push   $0x7e7
+  80:	68 f6 07 00 00       	push   $0x7f6
   85:	6a 01                	push   $0x1
   87:	e8 f4 03 00 00       	call   480 <printf>
   8c:	83 c4 10             	add    $0x10,%esp
   8f:	eb df                	jmp    70 <main+0x70>
 
   for(;;){
-    printf(1, "init: starting sh\n");
+    printf(1, "init: starting login\n");
     pid = fork();
     if(pid < 0){
       printf(1, "init: fork failed\n");
   91:	53                   	push   %ebx
   92:	53                   	push   %ebx
-  93:	68 bb 07 00 00       	push   $0x7bb
+  93:	68 be 07 00 00       	push   $0x7be
   98:	6a 01                	push   $0x1
   9a:	e8 e1 03 00 00       	call   480 <printf>
       exit();
   9f:	e8 8e 02 00 00       	call   332 <exit>
     }
     if(pid == 0){
-      exec("sh", argv);
+      exec("CustomLogin", argv);
   a4:	50                   	push   %eax
   a5:	50                   	push   %eax
-  a6:	68 94 0a 00 00       	push   $0xa94
-  ab:	68 ce 07 00 00       	push   $0x7ce
+  a6:	68 a8 0a 00 00       	push   $0xaa8
+  ab:	68 d1 07 00 00       	push   $0x7d1
   b0:	e8 b5 02 00 00       	call   36a <exec>
-      printf(1, "init: exec sh failed\n");
+      printf(1, "init: exec login failed\n");
   b5:	5a                   	pop    %edx
   b6:	59                   	pop    %ecx
-  b7:	68 d1 07 00 00       	push   $0x7d1
+  b7:	68 dd 07 00 00       	push   $0x7dd
   bc:	6a 01                	push   $0x1
   be:	e8 bd 03 00 00       	call   480 <printf>
       exit();
@@ -822,7 +822,7 @@ printint(int fd, int xx, int base, int sgn)
  41a:	31 d2                	xor    %edx,%edx
  41c:	8d 4f 01             	lea    0x1(%edi),%ecx
  41f:	f7 f6                	div    %esi
- 421:	0f b6 92 f8 07 00 00 	movzbl 0x7f8(%edx),%edx
+ 421:	0f b6 92 0c 08 00 00 	movzbl 0x80c(%edx),%edx
   }while((x /= base) != 0);
  428:	85 c0                	test   %eax,%eax
     x = xx;
@@ -1143,7 +1143,7 @@ putc(int fd, char c)
  598:	89 45 d0             	mov    %eax,-0x30(%ebp)
         if(s == 0)
           s = "(null)";
- 59b:	b8 f0 07 00 00       	mov    $0x7f0,%eax
+ 59b:	b8 02 08 00 00       	mov    $0x802,%eax
  5a0:	85 db                	test   %ebx,%ebx
  5a2:	0f 44 d8             	cmove  %eax,%ebx
         while(*s != 0){
@@ -1250,7 +1250,7 @@ free(void *ap)
 
   bp = (Header*)ap - 1;
   for(p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
- 621:	a1 9c 0a 00 00       	mov    0xa9c,%eax
+ 621:	a1 b0 0a 00 00       	mov    0xab0,%eax
 static Header base;
 static Header *freep;
 
@@ -1335,7 +1335,7 @@ free(void *ap)
     p->s.ptr = bp;
  677:	89 08                	mov    %ecx,(%eax)
   freep = p;
- 679:	a3 9c 0a 00 00       	mov    %eax,0xa9c
+ 679:	a3 b0 0a 00 00       	mov    %eax,0xab0
 }
  67e:	5b                   	pop    %ebx
  67f:	5e                   	pop    %esi
@@ -1367,7 +1367,7 @@ free(void *ap)
   } else
     p->s.ptr = bp;
   freep = p;
- 69d:	a3 9c 0a 00 00       	mov    %eax,0xa9c
+ 69d:	a3 b0 0a 00 00       	mov    %eax,0xab0
     bp->s.size += p->s.ptr->s.size;
     bp->s.ptr = p->s.ptr->s.ptr;
   } else
@@ -1408,7 +1408,7 @@ malloc(uint nbytes)
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
  6b9:	8b 45 08             	mov    0x8(%ebp),%eax
   if((prevp = freep) == 0){
- 6bc:	8b 15 9c 0a 00 00    	mov    0xa9c,%edx
+ 6bc:	8b 15 b0 0a 00 00    	mov    0xab0,%edx
 malloc(uint nbytes)
 {
   Header *p, *prevp;
@@ -1456,7 +1456,7 @@ malloc(uint nbytes)
       return (void*)(p + 1);
     }
     if(p == freep)
- 711:	39 05 9c 0a 00 00    	cmp    %eax,0xa9c
+ 711:	39 05 b0 0a 00 00    	cmp    %eax,0xab0
  717:	89 c2                	mov    %eax,%edx
  719:	75 ed                	jne    708 <malloc+0x58>
   char *p;
@@ -1482,7 +1482,7 @@ malloc(uint nbytes)
  735:	50                   	push   %eax
  736:	e8 e5 fe ff ff       	call   620 <free>
   return freep;
- 73b:	8b 15 9c 0a 00 00    	mov    0xa9c,%edx
+ 73b:	8b 15 b0 0a 00 00    	mov    0xab0,%edx
       }
       freep = prevp;
       return (void*)(p + 1);
@@ -1515,7 +1515,7 @@ malloc(uint nbytes)
  75c:	89 78 04             	mov    %edi,0x4(%eax)
       }
       freep = prevp;
- 75f:	89 15 9c 0a 00 00    	mov    %edx,0xa9c
+ 75f:	89 15 b0 0a 00 00    	mov    %edx,0xab0
       return (void*)(p + 1);
  765:	83 c0 08             	add    $0x8,%eax
     }
@@ -1545,12 +1545,12 @@ malloc(uint nbytes)
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
   if((prevp = freep) == 0){
     base.s.ptr = freep = prevp = &base;
- 776:	c7 05 9c 0a 00 00 a0 	movl   $0xaa0,0xa9c
+ 776:	c7 05 b0 0a 00 00 b4 	movl   $0xab4,0xab0
  77d:	0a 00 00 
- 780:	c7 05 a0 0a 00 00 a0 	movl   $0xaa0,0xaa0
+ 780:	c7 05 b4 0a 00 00 b4 	movl   $0xab4,0xab4
  787:	0a 00 00 
     base.s.size = 0;
- 78a:	b8 a0 0a 00 00       	mov    $0xaa0,%eax
- 78f:	c7 05 a4 0a 00 00 00 	movl   $0x0,0xaa4
+ 78a:	b8 b4 0a 00 00       	mov    $0xab4,%eax
+ 78f:	c7 05 b8 0a 00 00 00 	movl   $0x0,0xab8
  796:	00 00 00 
  799:	e9 3e ff ff ff       	jmp    6dc <malloc+0x2c>

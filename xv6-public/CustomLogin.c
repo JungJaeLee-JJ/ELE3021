@@ -1,6 +1,8 @@
 #include "types.h"
 #include "user.h"
+#include "fcntl.h"
 #include "file.h"
+#include "fs.h"
 
 char * user_name_list[10];
 char * user_password_list[10];
@@ -16,7 +18,7 @@ void read_user_list(){
 
     //파일이 존재하지 않을때
     int fd;
-    struct stat file_stat;
+    //struct stat st;
     int offset,read_count;
     
     if((fd = open("userlist.txt", O_RDWR))<0){
@@ -26,18 +28,18 @@ void read_user_list(){
         write(fd,"root",sizeof(char)*20);
         write(fd,"1234",sizeof(char)*20);    
     }else{
-        fstat(fd,file_stat);
+        //fstat(fd,&st);
         for(int i=0;;i++)
         {
             //다 읽은 경우
-            if(offset >= file_stat.size) break;
+            if(offset >= st.size) break;
             
             //읽기
-            if(read_count = read(fd,user_name_list[i],20)) offset = offset + read_count;
-            if(read_count = read(fd,user_password_list[i],20)) offset = offset + read_count;
+            if(0<(read_count = read(fd,user_name_list[i],20))) offset = offset + read_count;
+            if(0<(read_count = read(fd,user_password_list[i],20))) offset = offset + read_count;
         }
     }
-    close(fd)
+    close(fd);
 }
 
 
@@ -73,7 +75,7 @@ int main(void){
 
         // \n제거
         id[strlen(id) - 1] = 0; 
-        pass[strlen(pass) - 1] = 0;
+        password[strlen(password) - 1] = 0;
     
 
         if(check(id,password)){
@@ -83,7 +85,7 @@ int main(void){
             exit();
           }
           if(pid == 0 ){
-            exec("sh", &user);
+            exec("sh", &id);
             printf(1, "exec sh failed\n");
             exit();
           }
@@ -101,7 +103,7 @@ int main(void){
     free(password);
     for(int i=0;i<10;i++){
         free(user_name_list[i]);
-        free(user_password_list[i])
+        free(user_password_list[i]);
     }
 
     return 0;
