@@ -52,7 +52,9 @@ void read_user_list(){
 //login 가능 여부 확인
 int check(char *id, char *password) {
     for(int i = 0 ; i < 10 ; i++) {
+        printf(1,"-----------------------\n");
         printf(1,"%s%s",id,user_name_list[i]);
+        printf(1,"-----------------------\n");
         if(!strcmp(id, user_name_list[i]) && !strcmp(password, user_password_list[i])) return 1;
     }
     return 0;
