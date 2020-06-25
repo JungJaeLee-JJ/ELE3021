@@ -456,11 +456,9 @@ int useradd(void){
   char* username,password;
   if(argstr(0, &username) < 0 || argstr(1, &password) < 0) return -1;
   
-  struct file *f;
   struct inode *ip;
   char fileuserid[20];
   char filepassword[20];
-  int fd;
 
   begin_op();
   if((ip = namei("./userlist.txt")) == 0){
@@ -489,14 +487,12 @@ int useradd(void){
 }
 
 int userdel(char *username){
-  char* username
+  char* username;
   if(argstr(0, &username) < 0) return -1;
   
-  struct file *f;
   struct inode *ip;
   char fileuserid[20];
   char filepassword[20];
-  int fd;
 
   begin_op();
   if((ip = namei("./userlist.txt")) == 0){
