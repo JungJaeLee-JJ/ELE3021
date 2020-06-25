@@ -156,6 +156,11 @@ int             fetchint(uint, int*);
 int             fetchstr(uint, char**);
 void            syscall(void);
 
+//for project3
+int             useradd(char*, char*);
+int             userdel(char*);
+
+
 // timer.c
 void            timerinit(void);
 

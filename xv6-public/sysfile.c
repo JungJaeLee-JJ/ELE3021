@@ -453,7 +453,7 @@ strcmp(const char *p, const char *q)
 
 
 int useradd(void){
-  char* username,password;
+  char *username,password;
   if(argstr(0, &username) < 0 || argstr(1, &password) < 0) return -1;
   
   struct inode *ip;
@@ -487,7 +487,7 @@ int useradd(void){
 }
 
 int userdel(char *username){
-  char* username;
+  char *username;
   if(argstr(0, &username) < 0) return -1;
   
   struct inode *ip;
