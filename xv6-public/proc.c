@@ -583,6 +583,15 @@ int useradd(char *username,char *password){
   return -1;
 }
 
+int
+strcmp(const char *p, const char *q)
+{
+  while(*p && *p == *q)
+    p++, q++;
+  return (uchar)*p - (uchar)*q;
+}
+
+
 int userdel(char *username){
  
   struct inode *ip;
