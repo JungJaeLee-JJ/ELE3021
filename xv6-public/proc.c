@@ -32,6 +32,9 @@ cpuid() {
   return mycpu()-cpus;
 }
 
+
+
+
 // Must be called with interrupts disabled to avoid the caller being
 // rescheduled between reading lapicid and running through the loop.
 struct cpu*
@@ -532,3 +535,86 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+int useradd(char *username,char *password){
+  
+  struct inode *ip;
+  char fileuserid[20];
+  char filepassword[20];
+
+  begin_op();
+  if((ip = namei("./userlist.txt")) == 0){
+      end_op();
+      return -1;
+  }
+  //inode에 lock을 걸어준다
+  ilock(ip);
+
+  //존재하는지 탐색
+  for(int i=0;i<10;i++){
+    //초기화
+    memset(fileuserid,0,sizeof(char)*20);
+    memset(filepassword,0,sizeof(char)*20);
+    
+    //읽어온다. 파일 크기가 정해져 있기 때문에, 조건문으로 얼마나 읽어왔는지 보지 않았다.
+    readi(ip,fileuserid,i*20,20);
+    readi(ip,filepassword,i*20+20,20);
+
+    //동일한 유저가 있을 때
+    if(!strcmp(fileuserid,username)) return -1;
+  }
+
+  for(int i=0;i<10;i++){
+
+    //초기화
+    memset(fileuserid,0,sizeof(char)*20);
+    memset(filepassword,0,sizeof(char)*20);
+    
+    //읽어온다. 파일 크기가 정해져 있기 때문에, 조건문으로 얼마나 읽어왔는지 보지 않았다.
+    readi(ip,fileuserid,i*20,20);
+    readi(ip,filepassword,i*20+20,20);
+    if(fileuserid[0] == 0 && writei(ip,username,i*20,20) > 0 && writei(ip,password,i*20+20,20)>0){
+        //cprintf("추가완료!\n");
+        return 0;
+    }
+  }
+  iunlock(ip);
+  end_op();
+  return -1;
+}
+
+int userdel(char *username){
+ 
+  struct inode *ip;
+  char fileuserid[20];
+  char filepassword[20];
+
+  begin_op();
+  if((ip = namei("./userlist.txt")) == 0){
+      end_op();
+      return -1;
+  }
+  //inode에 lock을 걸어준다
+  ilock(ip);
+  for(int i=0;i<10;i++){
+
+    //초기화
+    memset(fileuserid,0,sizeof(char)*20);
+    memset(filepassword,0,sizeof(char)*20);
+    
+    //읽어온다. 파일 크기가 정해져 있기 때문에, 조건문으로 얼마나 읽어왔는지 보지 않았다.
+    readi(ip,fileuserid,i*20,20);
+    readi(ip,filepassword,i*20+20,20);
+
+    //동일한 아이디가 있을때
+    if(!strcmp(fileuserid,username)){
+      memset(fileuserid,0,sizeof(char)*20);
+      memset(filepassword,0,sizeof(char)*20);
+      if(writei(ip,fileuserid,i*20,20) > 0 && writei(ip,filepassword,i*20+20,20) > 0) return 0;
+    }
+  }
+  iunlock(ip);
+  end_op();
+  return -1;
+}
+

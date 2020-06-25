@@ -89,3 +89,20 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int
+sys_useradd(void)
+{
+  char *username,password;
+  if(argstr(0, &username) < 0 || argstr(1, &password) < 0) return -1;
+  return useradd(username,password);
+}
+
+int
+sys_userdel(void)
+{
+  char *username;
+  if(argstr(0, &username) < 0) return -1;
+  return userdel(username);
+}
+
