@@ -29,8 +29,6 @@ void read_user_list(){
     if((fd = open("userlist.txt", O_RDWR))<0){
         close(fd);
         fd = open("userlist.txt", O_CREATE|O_RDWR);
-        strcpy(user_name_list[0],"root");
-        strcpy(user_password_list[0],"1234");
         for(int i=0;i<10;i++){
             if(i==0){
                 write(fd,"root",sizeof(char)*20);
