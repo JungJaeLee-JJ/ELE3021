@@ -29,17 +29,15 @@ void read_user_list(){
     if((fd = open("userlist.txt", O_RDWR))<0){
         close(fd);
         fd = open("userlist.txt", O_CREATE|O_RDWR);
+        printf("No usertable. Creat...\n");
         strcpy(user_name_list[0],"root\n");
         strcpy(user_password_list[0],"1234\n");
         for(int i=0;i<10;i++){
-            if(i==0){
-                write(fd,"root\n",sizeof(char)*20);
-                write(fd,"1234\n",sizeof(char)*20);
-            }else{
-                write(fd,user_name_list[i],sizeof(char)*20);
-                write(fd,user_password_list[i],sizeof(char)*20);
-            }
-         }   
+            printf(1,"%s %s\n",user_name_list[i],user_password_list[i]);
+            write(fd,user_name_list[i],sizeof(char)*20);
+            write(fd,user_password_list[i],sizeof(char)*20);
+        }
+         
     }else{
         for(int i=0;;i++)
         {
@@ -92,7 +90,7 @@ int main(void){
             exit();
           }
           if(pid == 0 ){
-			printf(1,"Welcom %s\n\n",id);
+			printf(1,"Welcom %s\n",id);
             exec("sh", &id);
             printf(1, "exec sh failed\n");
             exit();
