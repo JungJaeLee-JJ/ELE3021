@@ -29,10 +29,12 @@ void read_user_list(){
     if((fd = open("userlist.txt", O_RDWR))<0){
         close(fd);
         fd = open("userlist.txt", O_CREATE|O_RDWR);
+        strcpy(user_name_list[0],"root\n");
+        strcpy(user_password_list[0],"1234\n");
         for(int i=0;i<10;i++){
             if(i==0){
-                write(fd,"root",sizeof(char)*20);
-                write(fd,"1234",sizeof(char)*20);
+                write(fd,"root\n",sizeof(char)*20);
+                write(fd,"1234\n",sizeof(char)*20);
             }else{
                 write(fd,user_name_list[i],sizeof(char)*20);
                 write(fd,user_password_list[i],sizeof(char)*20);
@@ -79,8 +81,8 @@ int main(void){
         password = gets(password , 20);
 
         // \n제거
-        id[strlen(id) - 1] = 0; 
-        password[strlen(password) - 1] = 0;
+        //id[strlen(id) - 1] = 0; 
+        //password[strlen(password) - 1] = 0;
     
 
         if(check(id,password)){
