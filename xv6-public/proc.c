@@ -546,15 +546,6 @@ strcmp(const char *p, const char *q)
 }
 
 
-uint
-strlen(const char *s)
-{
-  int n;
-
-  for(n = 0; s[n]; n++)
-    ;
-  return n;
-}
 
 
 int useradd(char *username,char *password){
@@ -618,7 +609,7 @@ int userdel(char *username){
   struct inode *ip;
   char fileuserid[20];
   char filepassword[20];
-  
+
   username[strlen(username)] = '\n';
 
   begin_op();
