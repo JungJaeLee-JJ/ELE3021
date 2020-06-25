@@ -49,26 +49,6 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-
-  //for mlfq
-  int priority;
-  int queuelevel;
-  int tickleft;
-
-  //for adminmode
-  int admin_mode;
-
-  //for custrom_stack_size;
-  int custom_stack_size;
-
-  //for limit sz
-  int limit_sz;
-
-  //for timer;
-  int start_time_tick;
-
-  //for shared memory
-  char* shared_memory_address;
 };
 
 // Process memory is laid out contiguously, low addresses first:
@@ -76,4 +56,3 @@ struct proc {
 //   original data and bss
 //   fixed-size stack
 //   expandable heap
-void priority_boosting(void);

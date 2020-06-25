@@ -24,7 +24,6 @@ void            panic(char*) __attribute__((noreturn));
 
 // exec.c
 int             exec(char*, char**);
-int				exec2(char*, char**, int stacksize);
 
 // file.c
 struct file*    filealloc(void);
@@ -121,12 +120,6 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-int             getlev(void);
-int             setpriority(int pid, int priority);
-int             getadmin(char *password);
-int             setmemorylimit(int pid , int limit);
-int             list(void);
-char*           getshmem(int pid);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
@@ -192,7 +185,6 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
-
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

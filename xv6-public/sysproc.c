@@ -62,13 +62,6 @@ sys_sleep(void)
   int n;
   uint ticks0;
 
-  /////////////////////////////////////////
-  //sleep때는 초기화
-  myproc()->queuelevel = 0;
- // myproc()->priority = 0;
-  myproc()->tickleft = 4;
-  //////////////////////////////////////////
-
   if(argint(0, &n) < 0)
     return -1;
   acquire(&tickslock);
@@ -95,59 +88,4 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
-}
-
-void 
-sys_yield()
-{
-  myproc()->queuelevel = 0;
-  //myproc()->priority = 0;
-  myproc()->tickleft = 4;
-  yield();
-}
-
-int             
-sys_getlev(void)
-{
-  return getlev();
-}
-
-int             
-sys_setpriority(void)
-{
-	int pid,priority;
-	if(argint(0,&pid)<0) return -1;
-	if(argint(1,&priority)<0) return -2;
-	return setpriority(pid,priority);
-}
-
-
-int
-sys_getadmin(void)
-{
-  char *student_number;
-  if( argstr(0,&student_number) < 0) return -1;
-  return getadmin(student_number);
-}
-
-int
-sys_setmemorylimit(void)
-{
-  int pid,limit;
-  if(argint(0,&pid)<0 || argint(1,&limit) < 0) return -1;
-  return setmemorylimit(pid,limit);
-}
-
-int
-sys_list(void)
-{
-  return list();
-}
-
-char*
-sys_getshmem(void)
-{
-  int pid;
-  if(argint(0,&pid)<0) return 0;
-  return getshmem(pid);
 }

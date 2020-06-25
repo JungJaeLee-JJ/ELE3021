@@ -18,12 +18,8 @@ strcpy(char *s, const char *t)
 int
 strcmp(const char *p, const char *q)
 {
-  while(*p && *p == *q){
+  while(*p && *p == *q)
     p++, q++;
-	//printf(2,"%c %c\n",*p,*q );
-  }
- // printf(2,"%d %d\n",*p,*q);
- // printf(2,"%d\n",(uchar)*p - (uchar)*q);
   return (uchar)*p - (uchar)*q;
 }
 

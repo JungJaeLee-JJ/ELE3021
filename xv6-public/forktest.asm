@@ -81,11 +81,11 @@ void
 printf(int fd, const char *s, ...)
 {
   write(fd, s, strlen(s));
-  59:	68 74 04 00 00       	push   $0x474
+  59:	68 34 04 00 00       	push   $0x434
   5e:	e8 6d 01 00 00       	call   1d0 <strlen>
   63:	83 c4 0c             	add    $0xc,%esp
   66:	50                   	push   %eax
-  67:	68 74 04 00 00       	push   $0x474
+  67:	68 34 04 00 00       	push   $0x434
   6c:	6a 01                	push   $0x1
   6e:	e8 3f 03 00 00       	call   3b2 <write>
   73:	83 c4 10             	add    $0x10,%esp
@@ -150,11 +150,11 @@ printf(int fd, const char *s, ...)
 {
   write(fd, s, strlen(s));
   b8:	83 ec 0c             	sub    $0xc,%esp
-  bb:	68 a6 04 00 00       	push   $0x4a6
+  bb:	68 66 04 00 00       	push   $0x466
   c0:	e8 0b 01 00 00       	call   1d0 <strlen>
   c5:	83 c4 0c             	add    $0xc,%esp
   c8:	50                   	push   %eax
-  c9:	68 a6 04 00 00       	push   $0x4a6
+  c9:	68 66 04 00 00       	push   $0x466
   ce:	6a 01                	push   $0x1
   d0:	e8 dd 02 00 00       	call   3b2 <write>
     printf(1, "wait got too many\n");
@@ -174,11 +174,11 @@ printf(int fd, const char *s, ...)
 {
   write(fd, s, strlen(s));
   e0:	83 ec 0c             	sub    $0xc,%esp
-  e3:	68 b4 04 00 00       	push   $0x4b4
+  e3:	68 74 04 00 00       	push   $0x474
   e8:	e8 e3 00 00 00       	call   1d0 <strlen>
   ed:	83 c4 0c             	add    $0xc,%esp
   f0:	50                   	push   %eax
-  f1:	68 b4 04 00 00       	push   $0x4b4
+  f1:	68 74 04 00 00       	push   $0x474
   f6:	6a 01                	push   $0x1
   f8:	e8 b5 02 00 00       	call   3b2 <write>
       exit();
@@ -202,11 +202,11 @@ printf(int fd, const char *s, ...)
 {
   write(fd, s, strlen(s));
  107:	83 ec 0c             	sub    $0xc,%esp
- 10a:	68 7f 04 00 00       	push   $0x47f
+ 10a:	68 3f 04 00 00       	push   $0x43f
  10f:	e8 bc 00 00 00       	call   1d0 <strlen>
  114:	83 c4 0c             	add    $0xc,%esp
  117:	50                   	push   %eax
- 118:	68 7f 04 00 00       	push   $0x47f
+ 118:	68 3f 04 00 00       	push   $0x43f
  11d:	6a 01                	push   $0x1
  11f:	e8 8e 02 00 00       	call   3b2 <write>
   }
@@ -223,11 +223,11 @@ printf(int fd, const char *s, ...)
 {
   write(fd, s, strlen(s));
  129:	83 ec 0c             	sub    $0xc,%esp
- 12c:	68 93 04 00 00       	push   $0x493
+ 12c:	68 53 04 00 00       	push   $0x453
  131:	e8 9a 00 00 00       	call   1d0 <strlen>
  136:	83 c4 0c             	add    $0xc,%esp
  139:	50                   	push   %eax
- 13a:	68 93 04 00 00       	push   $0x493
+ 13a:	68 53 04 00 00       	push   $0x453
  13f:	6a 01                	push   $0x1
  141:	e8 6c 02 00 00       	call   3b2 <write>
     }
@@ -285,7 +285,7 @@ strcmp(const char *p, const char *q)
  184:	53                   	push   %ebx
  185:	8b 55 08             	mov    0x8(%ebp),%edx
  188:	8b 4d 0c             	mov    0xc(%ebp),%ecx
-  while(*p && *p == *q){
+  while(*p && *p == *q)
  18b:	0f b6 02             	movzbl (%edx),%eax
  18e:	0f b6 19             	movzbl (%ecx),%ebx
  191:	84 c0                	test   %al,%al
@@ -300,7 +300,7 @@ strcmp(const char *p, const char *q)
 int
 strcmp(const char *p, const char *q)
 {
-  while(*p && *p == *q){
+  while(*p && *p == *q)
  1a3:	0f b6 02             	movzbl (%edx),%eax
     p++, q++;
  1a6:	8d 71 01             	lea    0x1(%ecx),%esi
@@ -309,7 +309,7 @@ strcmp(const char *p, const char *q)
 int
 strcmp(const char *p, const char *q)
 {
-  while(*p && *p == *q){
+  while(*p && *p == *q)
  1a9:	0f b6 59 01          	movzbl 0x1(%ecx),%ebx
  1ad:	84 c0                	test   %al,%al
  1af:	74 0f                	je     1c0 <strcmp+0x40>
@@ -317,10 +317,6 @@ strcmp(const char *p, const char *q)
  1b3:	38 d8                	cmp    %bl,%al
  1b5:	74 e9                	je     1a0 <strcmp+0x20>
     p++, q++;
-	//printf(2,"%c %c\n",*p,*q );
-  }
- // printf(2,"%d %d\n",*p,*q);
- // printf(2,"%d\n",(uchar)*p - (uchar)*q);
   return (uchar)*p - (uchar)*q;
  1b7:	29 d8                	sub    %ebx,%eax
 }
@@ -334,13 +330,9 @@ strcmp(const char *p, const char *q)
 int
 strcmp(const char *p, const char *q)
 {
-  while(*p && *p == *q){
+  while(*p && *p == *q)
  1c0:	31 c0                	xor    %eax,%eax
     p++, q++;
-	//printf(2,"%c %c\n",*p,*q );
-  }
- // printf(2,"%d %d\n",*p,*q);
- // printf(2,"%d\n",(uchar)*p - (uchar)*q);
   return (uchar)*p - (uchar)*q;
  1c2:	29 d8                	sub    %ebx,%eax
 }
@@ -871,51 +863,3 @@ SYSCALL(uptime)
  42a:	b8 0e 00 00 00       	mov    $0xe,%eax
  42f:	cd 40                	int    $0x40
  431:	c3                   	ret    
-
-00000432 <yield>:
-SYSCALL(yield)
- 432:	b8 16 00 00 00       	mov    $0x16,%eax
- 437:	cd 40                	int    $0x40
- 439:	c3                   	ret    
-
-0000043a <getlev>:
-SYSCALL(getlev)
- 43a:	b8 17 00 00 00       	mov    $0x17,%eax
- 43f:	cd 40                	int    $0x40
- 441:	c3                   	ret    
-
-00000442 <setpriority>:
-SYSCALL(setpriority)
- 442:	b8 18 00 00 00       	mov    $0x18,%eax
- 447:	cd 40                	int    $0x40
- 449:	c3                   	ret    
-
-0000044a <getadmin>:
-SYSCALL(getadmin)
- 44a:	b8 19 00 00 00       	mov    $0x19,%eax
- 44f:	cd 40                	int    $0x40
- 451:	c3                   	ret    
-
-00000452 <exec2>:
-SYSCALL(exec2)
- 452:	b8 1a 00 00 00       	mov    $0x1a,%eax
- 457:	cd 40                	int    $0x40
- 459:	c3                   	ret    
-
-0000045a <setmemorylimit>:
-SYSCALL(setmemorylimit)
- 45a:	b8 1b 00 00 00       	mov    $0x1b,%eax
- 45f:	cd 40                	int    $0x40
- 461:	c3                   	ret    
-
-00000462 <list>:
-SYSCALL(list)
- 462:	b8 1c 00 00 00       	mov    $0x1c,%eax
- 467:	cd 40                	int    $0x40
- 469:	c3                   	ret    
-
-0000046a <getshmem>:
-SYSCALL(getshmem)
- 46a:	b8 1d 00 00 00       	mov    $0x1d,%eax
- 46f:	cd 40                	int    $0x40
- 471:	c3                   	ret    

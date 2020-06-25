@@ -7,9 +7,6 @@
 #include "proc.h"
 #include "spinlock.h"
 
-extern pte_t* walkpgdir(pde_t *pgdir,const void *va,int alloc);
-//extern void free(void *ap);
-
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -91,21 +88,6 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  /////////////////////////////////////////
-  //항상 레벨 0에 들어가고 우선순위는 0이다.
-  p->queuelevel = 0;
-  p->priority = 0;
-  p->tickleft = 4;
-
-  //프로세스를 생성할 때는 admin모드는 꺼져있다.
-  p->admin_mode = 0;
-  p->limit_sz = 0;
-  p->custom_stack_size = 1;
-  //시작시간 
-  p->start_time_tick = ticks;
-  //공유메모리
-  p->shared_memory_address = 0;
-  //////////////////////////////////////////
 
   release(&ptable.lock);
 
@@ -180,11 +162,6 @@ growproc(int n)
   struct proc *curproc = myproc();
 
   sz = curproc->sz;
-
-  //limit가 설정이 되어 있고, 할당될 사이즈가 limit보다 더 커질려고 할 때 
-  if (curproc->limit_sz !=0 && n+sz >curproc->limit_sz ){
-    return -1;
-  }
   if(n > 0){
     if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
       return -1;
@@ -212,10 +189,6 @@ fork(void)
     return -1;
   }
 
-  //새 페이지 할당 및  주소 저장
-  np->shared_memory_address = kalloc();
-
-
   // Copy process state from proc.
   if((np->pgdir = copyuvm(curproc->pgdir, curproc->sz)) == 0){
     kfree(np->kstack);
@@ -226,11 +199,6 @@ fork(void)
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
-
-  //부모 프로세스와 같은 값으로 설정해준다.
-  np->admin_mode = curproc->admin_mode;
-  np->limit_sz = curproc->limit_sz;
-  np->custom_stack_size = curproc->custom_stack_size;
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
@@ -327,7 +295,6 @@ wait(void)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-		kfree(p->shared_memory_address);
         release(&ptable.lock);
         return pid;
       }
@@ -352,144 +319,41 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
-
-
-void 
-priority_boosting(void)
-{
-	struct proc *p;
-	acquire(&ptable.lock);
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-        p->queuelevel=0;
-        p->tickleft=4;
-  }
-	release(&ptable.lock);
-}
-
-/*
-#ifdef MLFQ_SCHED
-struct proc *each_level_last_process[MLFQ_K];
-#endif
-*/
-
-
 void
 scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
-
-
-
-  //MLFQ
-
+  
   for(;;){
     // Enable interrupts on this processor.
     sti();
+
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    #ifdef MULTILEVEL_SCHED
-    //cprintf("i'm in multi\n");
-    int even_p = 0;
-    //짝수 하나라도 있는지 파악한다.
-	
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state == RUNNABLE && p->pid % 2 ==0) {
-        even_p = 1;
-        break;
-      }
-	  }
-    if(even_p){
-      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE || p->pid % 2 != 0) continue;
-	  
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
-      swtch(&(c->scheduler), p->context);
-      switchkvm();
+      if(p->state != RUNNABLE)
+        continue;
 
-      c->proc = 0; 
-	  
-      }
-	}
-	  else{
-      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-		    if(p->state != RUNNABLE || p->pid % 2 == 0) continue;
-        c->proc = p;
-        switchuvm(p);
-        p->state = RUNNING;
-        swtch(&(c->scheduler), p->context);
-        switchkvm();
-        c->proc = 0; 
-	    break;
-      }
-    }
-    release(&ptable.lock);
- 
-    #elif MLFQ_SCHED
-
-    //초기값은 가장 높은 레벨의 큐(우선순위가 낮은)이다
-    int selected_queue = MLFQ_K-1;
-    struct proc * p_in_selected_queue = 0;
-   
-    
-    //프로세스 선정
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-
-      if(p->state != RUNNABLE || p->tickleft < 1) continue;
-      
-      //큐레벨이 높은거 우선
-      if(selected_queue >= p->queuelevel) {
-        selected_queue = p->queuelevel;
-        p_in_selected_queue = p;
-      }
-      //큐레벨이 같은 경우에는 우선순위가 높은 것을 고른다.
-      else if(selected_queue == p->queuelevel && p_in_selected_queue->priority < p->priority )  p_in_selected_queue = p;
-    }
-
-    if(p_in_selected_queue != 0 )
-    {
-      //기존 스케줄링했던게 있을 때
-      c->proc = p_in_selected_queue;
-      switchuvm(p_in_selected_queue);
-      p_in_selected_queue->state = RUNNING;      
-      swtch(&(c->scheduler), p_in_selected_queue->context);
-      switchkvm();
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
-	  release(&ptable.lock);
-    }
-    else
-    {
-      release(&ptable.lock);
-      priority_boosting();
-    }
-
-    #else
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE) continue;
-	 // cprintf("i'm in normal\n");
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
+
       swtch(&(c->scheduler), p->context);
       switchkvm();
+
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
     release(&ptable.lock);
-    #endif
+
   }
 }
-
-
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores
@@ -522,126 +386,10 @@ void
 yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
-  struct proc *now_p = myproc();
-  now_p->state = RUNNABLE;
+  myproc()->state = RUNNABLE;
   sched();
   release(&ptable.lock);
 }
-
-int             
-getlev(void)
-{
-  return myproc()->queuelevel;
-}
-
-int
-getadmin(char *password)
-{
-  char my_number[10] = "2016025823";
-  int flag = 0;
-  for(int i=0;i<10;i++){
-	  //cprintf("%c , %c \n",my_number[i],password[i]);
-    if(my_number[i] == password[i]) flag++;
-  }
-  if(flag == 10){
-    myproc()->admin_mode = 1;
-    return 0;
-  }
-  else{
-    return -1;
-  }
-}
-
-int 
-setmemorylimit(int pid, int limit)
-{
-  //admin mode가 아니거나, limit가 음수인 경우 
-  if(myproc()->admin_mode == 0 || limit < 0) return -1;
-  struct proc *target = 0;
-  struct proc *p;
-  acquire(&ptable.lock);
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->pid == pid) target = p;
-  }
-	release(&ptable.lock);
-  //해당 pid가 없을 때
-  if(target==0) return -1;
-
-  //기존 사이즈보다 더 작은 Limit을 주려고 할때
-
-  if(target->sz > limit) return -1;
-  target->limit_sz = limit;
-  return 0;
-}
-
-char*
-getshmem(int pid)
-{
-  struct proc *p;
-  char * return_address = 0;
-  uint * a;
-  acquire(&ptable.lock);
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->pid == pid) {
-      return_address = p->shared_memory_address;
-      //본인 프로세스의 접근할 때 - 읽기, 쓰기
-      if(p->pid == myproc()->pid){
-        a = walkpgdir(myproc()->pgdir, (char*)PGROUNDDOWN((uint)return_address),1);
-        *a = V2P(p->shared_memory_address) | PTE_P | PTE_U | PTE_W ;
-      }
-      //다른 프로세스에 접근 할 때 - 읽기
-      else{
-        a = walkpgdir(myproc()->pgdir, (char*)PGROUNDDOWN((uint)return_address),1);
-        *a = V2P(p->shared_memory_address) | PTE_P | PTE_U ;
-      }
-    }
-  }
-  release(&ptable.lock);
-  return return_address;
-}
-
-
-int
-list()
-{
-  cprintf("NAME\t\t|PID\t|TIME(ms)\t|MEMORY(bytes)\t|MEMLIM(bytes)\n");
-  struct proc *p;
-  acquire(&ptable.lock);
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-   if(p->pid != 0 || p->state !=UNUSED){
-	   if(strlen(p->name)>6) cprintf("%s\t|%d\t|%d\t\t|%d\t\t|%d\n",p->name,p->pid,ticks-p->start_time_tick,p->sz,p->limit_sz);
-	   else cprintf("%s\t\t|%d\t|%d\t\t|%d\t\t|%d\n", p->name,p->pid,ticks - p->start_time_tick,p->sz,p->limit_sz );
-    }
-  }
-	release(&ptable.lock);
-  return 0;
-}
-
-
-int             
-setpriority(int pid, int priority)
-{
-  struct proc *child;
-  if(priority<0 || priority>10) return -2;
-  //cli();
- //struct proc *parent = mycpu()->proc;
-  //sti();
-  acquire(&ptable.lock);
-  for(child = ptable.proc; child < &ptable.proc[NPROC]; child++){
-	  //cprintf("pid : %d ppid : %d 찾고있는 자식 pid : %d now pid : %d \n", child->pid, child->parent->pid, parent->pid ,pid);
-    if((child->pid == pid) &&( child->parent->
-			pid == myproc()->pid) )
-    {
-      child->priority=priority;
-      release(&ptable.lock);
-
-      return 0;
-    }
-	}
-  release(&ptable.lock);
-  return -1;
-}
-
 
 // A fork child's very first scheduling by scheduler()
 // will swtch here.  "Return" to user space.
@@ -690,7 +438,9 @@ sleep(void *chan, struct spinlock *lk)
   // Go to sleep.
   p->chan = chan;
   p->state = SLEEPING;
+
   sched();
+
   // Tidy up.
   p->chan = 0;
 
@@ -733,7 +483,6 @@ kill(int pid)
 
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-	  //cprintf("%d %d\n",pid,p->pid);
     if(p->pid == pid){
       p->killed = 1;
       // Wake process from sleep if necessary.

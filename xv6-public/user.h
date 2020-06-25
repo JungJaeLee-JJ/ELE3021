@@ -23,16 +23,6 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
-void yield(void);
-int getlev(void);
-int setpriority(int pid, int priority);
-int getadmin(char *password);
-int exec2(char*, char**, int stacksize);
-int setmemorylimit(int pid , int limit);
-int list(void);
-char* getshmem(int pid);
-
-
 
 // ulib.c
 int stat(const char*, struct stat*);

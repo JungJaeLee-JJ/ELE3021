@@ -81,8 +81,7 @@ trap(struct trapframe *tf)
   //PAGEBREAK: 13
   default:
     if(myproc() == 0 || (tf->cs&3) == 0){
-      //cprintf("에러탐지용 :  %d\n",myproc());
-	  // In kernel, it must be our mistake.
+      // In kernel, it must be our mistake.
       cprintf("unexpected trap %d from cpu %d eip %x (cr2=0x%x)\n",
               tf->trapno, cpuid(), tf->eip, rcr2());
       panic("trap");
@@ -103,27 +102,10 @@ trap(struct trapframe *tf)
 
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
-  #ifdef MLFQ_SCHED
-   if(myproc() && myproc()->state == RUNNING){
+  if(myproc() && myproc()->state == RUNNING &&
+     tf->trapno == T_IRQ0+IRQ_TIMER)
+    yield();
 
-      if(myproc()->tickleft >= 0) myproc()->tickleft--;
-      //큐 레벨이 올라가야할때
-      if(myproc()->queuelevel < MLFQ_K -1  &&  myproc()->tickleft == 0 ){
-        myproc()->queuelevel++;
-        myproc()->tickleft = 2 * myproc()->queuelevel + 4;
-        yield();
-      }
-      else if(myproc()->tickleft <= 0 ){
-         yield();
-      }
-  }
-  
-  if(ticks%100 == 0) priority_boosting();
-
-  #else
-  //myproc()->tick++;
-  if(myproc() && myproc()->state == RUNNING && tf->trapno == T_IRQ0+IRQ_TIMER) yield();
-  #endif
   // Check if the process has been killed since we yielded
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)
     exit();
