@@ -628,8 +628,8 @@ int userdel(char *username){
     memset(filepassword,0,sizeof(char)*20);
     
     //읽어온다. 파일 크기가 정해져 있기 때문에, 조건문으로 얼마나 읽어왔는지 보지 않았다.
-    readi(ip,fileuserid,i*20,20);
-    readi(ip,filepassword,i*20+20,20);
+    readi(ip,fileuserid,i*40,20);
+    readi(ip,filepassword,i*40+20,20);
 
     //동일한 아이디가 있을때
     if(!strcmp(fileuserid,username)){
