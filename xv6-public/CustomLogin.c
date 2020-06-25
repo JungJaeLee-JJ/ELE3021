@@ -1,8 +1,10 @@
 #include "types.h"
 #include "user.h"
-#include "fcntl.h"
-#include "file.h"
+#include "spinlock.h"
+#include "sleeplock.h"
 #include "fs.h"
+#include "file.h"
+#include "fcntl.h"
 
 char * user_name_list[10];
 char * user_password_list[10];
@@ -22,7 +24,7 @@ void read_user_list(){
     //파일이 존재하지 않을때
     int fd;
     //struct stat st;
-    int offset,read_count;
+    int read_count;
     
     if((fd = open("userlist.txt", O_RDWR))<0){
         close(fd);
@@ -75,7 +77,7 @@ int main(void){
         id = gets(id , 20);
 
         //password 입력
-        printf(1, "Password :  ");
+        printf(1, "Password : ");
         password = gets(password , 20);
 
         // \n제거
@@ -90,6 +92,7 @@ int main(void){
             exit();
           }
           if(pid == 0 ){
+			printf(1,"Welcom %s\n\n",id);
             exec("sh", &id);
             printf(1, "exec sh failed\n");
             exit();
