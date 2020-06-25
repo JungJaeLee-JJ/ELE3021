@@ -65,9 +65,12 @@ int main(void){
     char *id = (char *)malloc(20);
     char *password = (char *)malloc(20);
 
-    read_user_list();
+    //read_user_list();
 
     while(1){
+
+        read_user_list();
+
         //초기화
         memset(id,0,sizeof(char)*20);
         memset(password,0,sizeof(char)*20);
