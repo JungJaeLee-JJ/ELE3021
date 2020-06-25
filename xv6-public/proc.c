@@ -633,7 +633,11 @@ int userdel(char *username){
     if(!strcmp(fileuserid,username)){
       memset(fileuserid,0,sizeof(char)*20);
       memset(filepassword,0,sizeof(char)*20);
-      if(writei(ip,fileuserid,i*20,20) > 0 && writei(ip,filepassword,i*20+20,20) > 0) return 0;
+      if(writei(ip,fileuserid,i*20,20) > 0 && writei(ip,filepassword,i*20+20,20) > 0) {
+        iunlock(ip);
+        end_op();
+        return 0;
+      }
     }
   }
   iunlock(ip);
