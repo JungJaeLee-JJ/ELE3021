@@ -66,7 +66,7 @@ int main(void){
         id = gets(id , 20);
 
         //password 입력
-        printf(1, "Password :  ");
+        printf(1, "Password : ");
         password = gets(password , 20);
 
         // \n제거
@@ -81,6 +81,7 @@ int main(void){
             exit();
           }
           if(pid == 0 ){
+			printf(1,"Welcom %s\n\n",id);
             exec("sh", &id);
             printf(1, "exec sh failed\n");
             exit();
