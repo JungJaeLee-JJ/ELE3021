@@ -8,7 +8,6 @@
 
 char * user_name_list[10];
 char * user_password_list[10];
-int num_user = 1;
 
 void read_user_list(){
     
@@ -52,7 +51,8 @@ void read_user_list(){
 
 //login 가능 여부 확인
 int check(char *id, char *password) {
-    for(int i = 0 ; i < num_user ; i++) {
+    for(int i = 0 ; i < 10 ; i++) {
+        //printf(1,"%s%s",id,user_name_list[i]);
         if(!strcmp(id, user_name_list[i]) && !strcmp(password, user_password_list[i])) return 1;
     }
     return 0;
