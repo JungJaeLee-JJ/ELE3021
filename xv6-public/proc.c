@@ -571,7 +571,11 @@ int useradd(char *username,char *password){
     readi(ip,filepassword,i*20+20,20);
 
     //동일한 유저가 있을 때
-    if(!strcmp(fileuserid,username)) return -1;
+    if(!strcmp(fileuserid,username)) {
+      iunlock(ip);
+      end_op();
+      return -1;
+    }
   }
 
   for(int i=0;i<10;i++){
@@ -584,7 +588,8 @@ int useradd(char *username,char *password){
     readi(ip,fileuserid,i*20,20);
     readi(ip,filepassword,i*20+20,20);
     if(fileuserid[0] == 0 && writei(ip,username,i*20,20) > 0 && writei(ip,password,i*20+20,20)>0){
-        //cprintf("추가완료!\n");
+        iunlock(ip);
+        end_op();
         return 0;
     }
   }

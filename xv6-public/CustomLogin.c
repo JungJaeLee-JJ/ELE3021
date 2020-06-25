@@ -29,7 +29,7 @@ void read_user_list(){
     if((fd = open("userlist.txt", O_RDWR))<0){
         close(fd);
         fd = open("userlist.txt", O_CREATE|O_RDWR);
-        printf("No usertable. Creat...\n");
+        printf(1,"No usertable. Creat...\n");
         strcpy(user_name_list[0],"root\n");
         strcpy(user_password_list[0],"1234\n");
         for(int i=0;i<10;i++){
