@@ -5,7 +5,10 @@
 #include "mmu.h"
 #include "x86.h"
 #include "proc.h"
+#include "fs.h"
 #include "spinlock.h"
+#include "sleeplock.h"
+#include "file.h"
 #include "stat.h"
 
 extern struct inode* create(char *path, short type, short major, short minor);
@@ -619,7 +622,7 @@ int useradd(char *username,char *password){
 	        end_op();
 	        return 0;
         }
-        strcpy(ip_dir->owner, username, sizeof(ip_dir->owner));
+        strcpy(ip_dir->owner, username);
         iupdate(ip_dir);
         iunlockput(ip_dir);
         end_op();
