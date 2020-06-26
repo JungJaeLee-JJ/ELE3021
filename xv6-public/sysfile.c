@@ -16,6 +16,25 @@
 #include "file.h"
 #include "fcntl.h"
 
+extern int strcmp(const char *p, const char *q);
+
+
+//접근가능여부 파악
+int acess(char *owner, struct inode *ip,  int user, int other) 
+{
+  //devide 예외처리
+	if(ip->type == T_DIR || ip->type == T_FILE) {
+  		if(!strcmp(owner, "root") || !strncmp(ip->owner, owner )) {
+			  if( (ip->mode & user) == 0)  return 0;
+  		} else {
+			if((ip->mode & other) == 0) return 0;
+  		}
+	}
+	return 1;
+}
+
+
+
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
 static int
