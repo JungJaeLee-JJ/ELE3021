@@ -639,6 +639,7 @@ namex(char *path, int nameiparent, char *name)
       iunlockput(ip);
       return 0;
     }
+    cprintf("in while path : %s\n",path);
     cprintf("in while : %s %s \n",myproc()->owner,ip->owner);
     if(!acess(myproc()->owner,ip,MODE_XUSR,MODE_XOTH)){
       cprintf("namex access test\n");
