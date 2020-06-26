@@ -5,8 +5,12 @@
 #include "param.h"
 #include "memlayout.h"
 #include "mmu.h"
+#include "fs.h"
+#include "spinlock.h"
+#include "sleeplock.h"
+#include "file.h"
+#include "stat.h"
 #include "proc.h"
-
 
 
 int
@@ -130,8 +134,7 @@ sys_chmod(void)
 {
   struct inode *ip;
   char *path;
-  uint mode;
-  int tmp;
+  int mode,tmp;
 
 
   if(argstr(0, &path) < 0 || argint(1, &mode) < 0)
