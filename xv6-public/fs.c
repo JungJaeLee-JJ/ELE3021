@@ -308,7 +308,7 @@ ilock(struct inode *ip)
     ip->minor = dip->minor;
     ip->nlink = dip->nlink;
     ip->size = dip->size;
-    afestrcpy(ip->owner,dip->owner,sizeof(dip->owner));
+    safestrcpy(ip->owner,dip->owner,sizeof(dip->owner));
     ip->mode = dip->mode;
     memmove(ip->addrs, dip->addrs, sizeof(ip->addrs));
     brelse(bp);
