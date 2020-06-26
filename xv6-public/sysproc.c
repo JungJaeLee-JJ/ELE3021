@@ -121,13 +121,6 @@ sys_chname(void){
 }
 
 
-int
-strcmp(const char *p, const char *q)
-{
-  while(*p && *p == *q)
-    p++, q++;
-  return (uchar)*p - (uchar)*q;
-}
 
 int
 sys_chmod(void)
