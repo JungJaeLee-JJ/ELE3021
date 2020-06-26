@@ -13,6 +13,8 @@
 #include "proc.h"
 
 
+extern int strcmp(const char *p, const char *q);
+
 int
 sys_fork(void)
 {
@@ -119,7 +121,6 @@ sys_chname(void){
   if(argstr(0, &username) < 0) return -1;
   return chname(username);
 }
-
 
 
 int
