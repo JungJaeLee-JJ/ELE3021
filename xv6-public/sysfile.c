@@ -24,7 +24,7 @@ int acess(char *owner, struct inode *ip,  int user, int other)
 {
   //devide 예외처리
 	if(ip->type == T_DIR || ip->type == T_FILE) {
-  		if(!strcmp(owner, "root") || !strncmp(ip->owner, owner )) {
+  		if(!strcmp(owner, "root") || !strcmp(ip->owner, owner )) {
 			  if( (ip->mode & user) == 0)  return 0;
   		} else {
 			if((ip->mode & other) == 0) return 0;
