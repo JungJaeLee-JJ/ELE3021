@@ -1,11 +1,15 @@
 #include "types.h"
 #include "defs.h"
 #include "param.h"
-#include "memlayout.h"
+#include "stat.h"
 #include "mmu.h"
-#include "x86.h"
 #include "proc.h"
+#include "fs.h"
 #include "spinlock.h"
+#include "sleeplock.h"
+#include "file.h"
+#include "fcntl.h"
+
 
 struct {
   struct spinlock lock;
@@ -546,6 +550,16 @@ strcmp(const char *p, const char *q)
 }
 
 
+char*
+strcpy(char *s, const char *t)
+{
+  char *os;
+
+  os = s;
+  while((*s++ = *t++) != 0)
+    ;
+  return os;
+}
 
 
 int useradd(char *username,char *password){
