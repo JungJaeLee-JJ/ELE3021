@@ -689,3 +689,12 @@ int chname(char* name){
   strcpy(myproc()->owner,name);
   return 1;
 }
+
+int
+chmod(struct inode *ip, int mode)
+{
+  ip->mode = mode;
+  iupdate(ip);
+  return 0;
+}
+
