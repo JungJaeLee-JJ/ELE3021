@@ -574,6 +574,8 @@ int useradd(char *username,char *password){
   username[strlen(username)] = '\n';
   password[strlen(password)] = '\n';
 
+  //root가 아닐때
+  if (strcmp(myproc()->owner,"root\n")) return -1;
 
   begin_op();
   if((ip = namei("./userlist.txt")) == 0){
@@ -643,6 +645,9 @@ int userdel(char *username){
   char filepassword[20];
 
   username[strlen(username)] = '\n';
+
+  //root가 아닐때
+  if (strcmp(myproc()->owner,"root\n")) return -1;
 
   begin_op();
   if((ip = namei("./userlist.txt")) == 0){
