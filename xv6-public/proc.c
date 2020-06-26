@@ -220,6 +220,7 @@ fork(void)
   np->cwd = idup(curproc->cwd);
 
   safestrcpy(np->name, curproc->name, sizeof(curproc->name));
+  safestrcpy(np->owner, curproc->owner, sizeof(curproc->owner));
 
   pid = np->pid;
 
