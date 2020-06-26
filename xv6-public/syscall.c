@@ -134,6 +134,7 @@ static int (*syscalls[])(void) = {
 [SYS_userdel] sys_userdel,
 [SYS_chname]  sys_chname,
 [SYS_chmod] sys_chmod,
+
 };
 
 void
