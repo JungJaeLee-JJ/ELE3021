@@ -97,7 +97,7 @@ int main(void){
           if(pid == 0 ){
             id[strlen(id)-1] = 0;
 			printf(1,"Welcom %s\n",id);
-            chname(id)
+            chname(id);
             exec("sh", &id);
             printf(1, "exec sh failed\n");
             exit();
