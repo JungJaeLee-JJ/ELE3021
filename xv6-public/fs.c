@@ -445,7 +445,11 @@ stati(struct inode *ip, struct stat *st)
   st->ino = ip->inum;
   st->type = ip->type;
   st->nlink = ip->nlink;
+
+  safestrcpy(st->owner,ip->owner);
+  st->mode = ip->mode;
   st->size = ip->size;
+
 }
 
 //PAGEBREAK!
