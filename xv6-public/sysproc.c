@@ -107,3 +107,9 @@ sys_userdel(void)
   return userdel(username);
 }
 
+int 
+sys_chname(void){
+  char *username;
+  if(argstr(0, &username) < 0) return -1;
+  return chname(username);
+}

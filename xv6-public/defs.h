@@ -122,6 +122,7 @@ void            wakeup(void*);
 void            yield(void);
 int             useradd(char* username,char* password);
 int             userdel(char* username);
+int             chname(char* name);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

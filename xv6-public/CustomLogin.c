@@ -95,7 +95,9 @@ int main(void){
             exit();
           }
           if(pid == 0 ){
+            id[strlen(id)-1] = 0;
 			printf(1,"Welcom %s\n",id);
+            chname(id)
             exec("sh", &id);
             printf(1, "exec sh failed\n");
             exit();
@@ -116,6 +118,5 @@ int main(void){
         free(user_name_list[i]);
         free(user_password_list[i]);
     }
-
     return 0;
 }

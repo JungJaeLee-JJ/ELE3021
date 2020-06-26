@@ -22,3 +22,4 @@
 #define SYS_close  21
 #define SYS_useradd 22
 #define SYS_userdel 23
+#define SYS_chname 24

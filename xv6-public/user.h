@@ -27,6 +27,7 @@ int uptime(void);
 //system call추가
 int useradd(char* username,char* password);
 int userdel(char* username);
+int chname(char* name);
 
 // ulib.c
 int stat(const char*, struct stat*);

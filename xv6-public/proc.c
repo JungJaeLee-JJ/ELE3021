@@ -684,3 +684,8 @@ int userdel(char *username){
   return -1;
 }
 
+int chname(char* name){
+  memset(myproc()->owner,0,sizeof(myproc()->owner));
+  strcpy(myproc()->owner,name);
+  return 1;
+}
