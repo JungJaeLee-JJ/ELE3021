@@ -651,6 +651,9 @@ int userdel(char *username){
   //root가 아닐때
   if (strcmp(myproc()->owner,"root")) return -1;
 
+  //root를 지우려고 할때
+  if (strcmp(username,"root\n")) return -1;
+
   begin_op();
   if((ip = namei("./userlist.txt")) == 0){
       end_op();
