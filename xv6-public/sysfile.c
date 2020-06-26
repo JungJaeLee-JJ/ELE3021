@@ -221,7 +221,7 @@ sys_unlink(void)
   ilock(dp);
 
   if(!acess(myproc()->owner,dp,MODE_WUSR,MODE_WOTH)){
-    cprintf("unlink access check fail\n");
+    //cprintf("unlink access check fail\n");
     iunlockput(dp);
     end_op();
     return -1;
@@ -268,7 +268,7 @@ bad:
 struct inode*
 create(char *path, short type, short major, short minor)
 {
-  cprintf("create : path : %s\n",path);
+  //cprintf("create : path : %s\n",path);
   struct inode *ip, *dp;
   char name[DIRSIZ];
 
@@ -342,7 +342,7 @@ sys_open(void)
   if(argstr(0, &path) < 0 || argint(1, &omode) < 0)
     return -1;
 
-  cprintf("open start path : %s\n",path);
+  //cprintf("open start path : %s\n",path);
 
   begin_op();
 
@@ -368,7 +368,7 @@ sys_open(void)
   //권환 확인
   if(omode == O_RDONLY || omode == O_RDWR){
      if(!acess(myproc()->owner,ip,MODE_RUSR,MODE_ROTH)){
-      cprintf("open Read access test\n");
+      //cprintf("open Read access test\n");
       iunlockput(ip);
       end_op();
       return -1;
@@ -376,7 +376,7 @@ sys_open(void)
   }
   if(omode == O_WRONLY || omode == O_RDWR){
       if(!acess(myproc()->owner,ip,MODE_RUSR,MODE_ROTH)){
-      cprintf("open Write access test\n");
+      //cprintf("open Write access test\n");
       iunlockput(ip);
       end_op();
       return -1;
@@ -457,7 +457,7 @@ sys_chdir(void)
   }
 
   if(!acess(myproc()->owner,ip,MODE_XUSR,MODE_XOTH)){
-    cprintf("chdir access check fail\n");
+    //cprintf("chdir access check fail\n");
     iunlockput(ip);
     end_op();
     return -1;
