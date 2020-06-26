@@ -232,6 +232,9 @@ iupdate(struct inode *ip)
   dip->minor = ip->minor;
   dip->nlink = ip->nlink;
   dip->size = ip->size;
+  safestrcpy(dip->owner,ip->owner,sizeof(ip->owner));
+  dip->mode = ip->mode;
+
   memmove(dip->addrs, ip->addrs, sizeof(ip->addrs));
   log_write(bp);
   brelse(bp);
@@ -446,7 +449,7 @@ stati(struct inode *ip, struct stat *st)
   st->type = ip->type;
   st->nlink = ip->nlink;
 
-  safestrcpy(st->owner,ip->owner);
+  safestrcpy(st->owner,ip->owner,sizeof(ip->owner));
   st->mode = ip->mode;
   st->size = ip->size;
 
