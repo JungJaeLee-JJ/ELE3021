@@ -1,14 +1,15 @@
 #include "types.h"
 #include "defs.h"
 #include "param.h"
-#include "stat.h"
+#include "memlayout.h"
 #include "mmu.h"
+#include "x86.h"
 #include "proc.h"
-#include "fs.h"
 #include "spinlock.h"
-#include "sleeplock.h"
-#include "file.h"
-#include "fcntl.h"
+#include "stat.h"
+
+extern struct inode* create(char *path, short type, short major, short minor);
+
 
 
 struct {
