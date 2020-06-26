@@ -27,6 +27,8 @@ static void itrunc(struct inode*);
 // only one device
 struct superblock sb; 
 
+int acess(char *owner, struct inode *ip,  int user, int other);
+
 // Read the super block.
 void
 readsb(int dev, struct superblock *sb)
@@ -637,6 +639,12 @@ namex(char *path, int nameiparent, char *name)
       iunlockput(ip);
       return 0;
     }
+    if(!acess(myproc()->owner,ip,MODE_XUSR,MODE_XOTH)){
+      cprintf("namex access test\n");
+      iunlockput(ip);
+      return 0;
+    }
+
     if(nameiparent && *path == '\0'){
       // Stop one level early.
       iunlock(ip);

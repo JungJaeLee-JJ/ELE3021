@@ -17,6 +17,7 @@
 #include "fcntl.h"
 
 extern int strcmp(const char *p, const char *q);
+extern char* strcpy(char *s, const char *t);
 
 
 //접근가능여부 파악
@@ -219,6 +220,13 @@ sys_unlink(void)
 
   ilock(dp);
 
+  if(!acess(myproc()->owner,dp,MODE_WUSR,MODE_WOTH)){
+    cprintf("unlink access check fail\n");
+    iunlockput(dp);
+    end_op();
+    return -1;
+  }
+
   // Cannot unlink "." or "..".
   if(namecmp(name, ".") == 0 || namecmp(name, "..") == 0)
     goto bad;
@@ -263,17 +271,32 @@ create(char *path, short type, short major, short minor)
   struct inode *ip, *dp;
   char name[DIRSIZ];
 
-  if((dp = nameiparent(path, name)) == 0)
-    return 0;
+  if((dp = nameiparent(path, name)) == 0) return 0;
   ilock(dp);
 
   if((ip = dirlookup(dp, name, 0)) != 0){
     iunlockput(dp);
     ilock(ip);
-    if(type == T_FILE && ip->type == T_FILE)
+    if(type == T_FILE && ip->type == T_FILE){
+
+      if(!acess(myproc()->owner,ip,MODE_WUSR,MODE_WOTH)){
+        //cprintf("create access check over fail\n");
+        //cprintf("%s %s\n ",path,ip->owner);
+        iunlockput(ip);
+        return 0;
+      }
+
       return ip;
+    }
     iunlockput(ip);
     return 0;
+  }
+  if(type ==T_DIR || type == T_FILE){
+    if(!acess(myproc()->owner,dp,MODE_WUSR,MODE_WOTH)){
+    //cprintf("create access check under fail\n");
+      iunlockput(dp);
+      return 0;
+   }
   }
 
   if((ip = ialloc(dp->dev, type)) == 0)
@@ -293,8 +316,14 @@ create(char *path, short type, short major, short minor)
       panic("create dots");
   }
 
-  if(dirlink(dp, name, ip->inum) < 0)
-    panic("create: dirlink");
+  strcpy(ip->owner,myproc()->owner);
+
+  if(dirlink(dp, name, ip->inum) < 0) panic("create: dirlink");
+  
+  if(type== T_FILE) ip->mode = MODE_RUSR | MODE_WUSR |  MODE_ROTH;
+  else if(type == T_DIR) ip->mode = MODE_RUSR | MODE_WUSR | MODE_XUSR | MODE_ROTH | MODE_XOTH;
+  
+  iupdate(ip);
 
   iunlockput(dp);
 
@@ -327,6 +356,24 @@ sys_open(void)
     }
     ilock(ip);
     if(ip->type == T_DIR && omode != O_RDONLY){
+      iunlockput(ip);
+      end_op();
+      return -1;
+    }
+  }
+
+  //권환 확인
+  if(omode == O_RDONLY || omode == O_RDWR){
+     if(!acess(myproc()->owner,ip,MODE_RUSR,MODE_ROTH)){
+      cprintf("open Read access test\n");
+      iunlockput(ip);
+      end_op();
+      return -1;
+    }
+  }
+  if(omode == O_WRONLY || omode == O_RDWR){
+      if(!acess(myproc()->owner,ip,MODE_RUSR,MODE_ROTH)){
+      cprintf("open Write access test\n");
       iunlockput(ip);
       end_op();
       return -1;
@@ -405,6 +452,14 @@ sys_chdir(void)
     end_op();
     return -1;
   }
+
+  if(!acess(myproc()->owner,ip,MODE_XUSR,MODE_XOTH)){
+    cprintf("chdir access check fail\n");
+    iunlockput(ip);
+    end_op();
+    return -1;
+  }
+
   iunlock(ip);
   iput(curproc->cwd);
   end_op();
