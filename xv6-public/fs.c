@@ -627,7 +627,7 @@ static struct inode*
 namex(char *path, int nameiparent, char *name)
 {
   struct inode *ip, *next;
-
+  cprintf("namex path : %s\n",path);
   if(*path == '/')
     ip = iget(ROOTDEV, ROOTINO);
   else
@@ -639,6 +639,7 @@ namex(char *path, int nameiparent, char *name)
       iunlockput(ip);
       return 0;
     }
+    cprintf("in while : %s %s \n",myproc()->owner,ip->owner);
     if(!acess(myproc()->owner,ip,MODE_XUSR,MODE_XOTH)){
       cprintf("namex access test\n");
       iunlockput(ip);
