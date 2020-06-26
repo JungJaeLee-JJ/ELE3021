@@ -268,6 +268,7 @@ bad:
 struct inode*
 create(char *path, short type, short major, short minor)
 {
+  cprintf("create : path : %s\n",path);
   struct inode *ip, *dp;
   char name[DIRSIZ];
 
