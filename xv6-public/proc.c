@@ -597,6 +597,17 @@ int useradd(char *username,char *password){
     if(fileuserid[0] == 0 && writei(ip,username,i*40,20) > 0 && writei(ip,password,i*40+20,20)>0){
         iunlock(ip);
         end_op();
+        //폴더생성
+        struct inode *ip_dir;
+        begin_op();
+        if((ip_dir = create(username, T_DIR, 0, 0)) == 0) {
+	        end_op();
+	        return 0;
+        }
+        strcpy(ip_dir->owner, username, sizeof(ip_dir->owner));
+        iupdate(ip_dir);
+        iunlockput(ip_dir);
+        end_op();
         return 0;
     }
   }
