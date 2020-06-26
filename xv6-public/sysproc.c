@@ -134,8 +134,7 @@ sys_chmod(void)
 {
   struct inode *ip;
   char *path;
-  int mode,tmp;
-
+  int mode;
 
   if(argstr(0, &path) < 0 || argint(1, &mode) < 0)
     return -1;
@@ -150,10 +149,11 @@ sys_chmod(void)
 
   //해당할때
   if(!(strcmp(myproc()->owner, "root")) || !(strcmp(myproc()->owner, ip->owner))){
-    tmp = chmod(ip, mode);
+    ip->mode = mode;
+    iupdate(ip);
     iunlock(ip);
     end_op();
-    return tmp;
+    return 0;
   }
 	iunlock(ip);
 	end_op();
