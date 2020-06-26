@@ -23,3 +23,4 @@
 #define SYS_useradd 22
 #define SYS_userdel 23
 #define SYS_chname 24
+#define SYS_chmode 25

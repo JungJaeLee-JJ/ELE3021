@@ -7,6 +7,8 @@
 #include "mmu.h"
 #include "proc.h"
 
+
+
 int
 sys_fork(void)
 {
@@ -113,3 +115,45 @@ sys_chname(void){
   if(argstr(0, &username) < 0) return -1;
   return chname(username);
 }
+
+
+int
+strcmp(const char *p, const char *q)
+{
+  while(*p && *p == *q)
+    p++, q++;
+  return (uchar)*p - (uchar)*q;
+}
+
+int
+sys_chmod(void)
+{
+  struct inode *ip;
+  char *path;
+  uint mode;
+  int tmp;
+
+
+  if(argstr(0, &path) < 0 || argint(1, &mode) < 0)
+    return -1;
+  
+  //ip획득
+  begin_op();
+  if((ip = namei(path)) == 0) {
+	  end_op();
+	  return -1;
+  }
+  ilock(ip);
+
+  //해당할때
+  if(!(strcmp(myproc()->owner, "root")) || !(strcmp(myproc()->owner, ip->owner))){
+    tmp = chmod(ip, mode);
+    iunlock(ip);
+    end_op();
+    return tmp;
+  }
+	iunlock(ip);
+	end_op();
+	return -1;
+}
+

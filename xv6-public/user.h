@@ -28,6 +28,7 @@ int uptime(void);
 int useradd(char* username,char* password);
 int userdel(char* username);
 int chname(char* name);
+int chmod(char *pathname, int mode);
 
 // ulib.c
 int stat(const char*, struct stat*);
