@@ -5,6 +5,15 @@
 #define ROOTINO 1  // root i-number
 #define BSIZE 512  // block size
 
+//for p3
+#define MODE_RUSR 32
+#define MODE_WUSR 16
+#define MODE_XUSR 8
+#define MODE_ROTH 4
+#define MODE_WOTH 2
+#define MODE_XOTH 1
+
+
 // Disk layout:
 // [ boot block | super block | log | inode blocks |
 //                                          free bit map | data blocks]
