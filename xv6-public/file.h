@@ -1,4 +1,4 @@
-#define NDIRECT 12
+#define NDIRECT 6
 
 struct file {
   enum { FD_NONE, FD_PIPE, FD_INODE } type;
@@ -24,6 +24,8 @@ struct inode {
   short minor;
   short nlink;
   uint size;
+  uint mode;
+  char owner[20];
   uint addrs[NDIRECT+1];
 };
 
