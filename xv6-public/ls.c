@@ -45,18 +45,12 @@ ls(char *path)
   switch(st.type){
   case T_FILE:
     strcpy(mode,"-------");
-    if(st.mode & MODE_RUSR)
-      mode[1] = 'r';
-    if(st.mode & MODE_WUSR)
-      mode[2] = 'w';
-    if(st.mode & MODE_XUSR)
-      mode[3] = 'x';
-    if(st.mode & MODE_ROTH)
-      mode[4] = 'r';
-    if(st.mode & MODE_WOTH)
-      mode[5] = 'w';
-    if(st.mode & MODE_XOTH)
-      mode[6] = 'x';
+    if(st.mode & MODE_RUSR) mode[1] = 'r';
+    if(st.mode & MODE_WUSR) mode[2] = 'w';
+    if(st.mode & MODE_XUSR) mode[3] = 'x';
+    if(st.mode & MODE_ROTH) mode[4] = 'r';
+    if(st.mode & MODE_WOTH) mode[5] = 'w';
+    if(st.mode & MODE_XOTH) mode[6] = 'x';
     mode[7] = '\0';
     printf(1, "%s %s %s %d %d %d\n", fmtname(path), mode, st.owner, st.type, st.ino, st.size);
     break;
@@ -82,18 +76,12 @@ ls(char *path)
       strcpy(mode,"-------");
       if(st.type == T_DIR) mode[0] = 'd';
       else mode[0] = '-';
-      if(st.mode & MODE_RUSR)
-        mode[1] = 'r';
-      if(st.mode & MODE_WUSR)
-        mode[2] = 'w';
-      if(st.mode & MODE_XUSR)
-        mode[3] = 'x';
-      if(st.mode & MODE_ROTH)
-        mode[4] = 'r';
-      if(st.mode & MODE_WOTH)
-        mode[5] = 'w';
-      if(st.mode & MODE_XOTH)
-        mode[6] = 'x';
+      if(st.mode & MODE_RUSR) mode[1] = 'r';
+      if(st.mode & MODE_WUSR) mode[2] = 'w';
+      if(st.mode & MODE_XUSR) mode[3] = 'x';
+      if(st.mode & MODE_ROTH) mode[4] = 'r';
+      if(st.mode & MODE_WOTH) mode[5] = 'w';
+      if(st.mode & MODE_XOTH) mode[6] = 'x';
       mode[7] = '\0';
   	  printf(1, "%s %s %s %d %d %d\n", fmtname(buf), mode, st.owner, st.type, st.ino, st.size);
     }

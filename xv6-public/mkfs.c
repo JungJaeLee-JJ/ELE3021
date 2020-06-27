@@ -231,7 +231,7 @@ ialloc(ushort type)
   din.nlink = xshort(1);
   din.size = xint(0);
   
-  //for p3
+  //초기 생성되는 파일들을 root권한이고 명세 처럼 권한을 가진다.
   strcpy(din.owner, "root");
   din.mode = MODE_RUSR | MODE_ROTH | MODE_WUSR | MODE_XUSR | MODE_XOTH;
   

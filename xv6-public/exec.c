@@ -11,8 +11,6 @@
 //접근가능여부 파악
 extern int acess(char *owner, struct inode *ip,  int user, int other);
 
-
-
 int
 exec(char *path, char **argv)
 {
@@ -36,7 +34,7 @@ exec(char *path, char **argv)
   pgdir = 0;
 
   if(!acess(myproc()->owner,ip,MODE_XUSR,MODE_XOTH)){
-    cprintf("exec access check fail\n");
+    //cprintf("exec access check fail\n");
     iunlockput(ip);
     end_op();
     return -1;
